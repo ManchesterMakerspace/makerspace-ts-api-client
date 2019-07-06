@@ -1,0 +1,18 @@
+import CoreApiClient from "lib/coreApiClient";
+
+{{#definitions}}
+
+{{/repo}}
+
+class ApiClient extends CoreApiClient {
+  constructor(baseUrl: string) {
+    super();
+    this.baseUrl = baseUrl;
+  }
+  {{#paths}}
+    public {{operationId}} = () =>  this.makeRequest({{operation}}, {{path}});
+  {{/paths}}
+
+}
+
+export default ApiClient;
