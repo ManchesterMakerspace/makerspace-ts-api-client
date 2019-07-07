@@ -6,5 +6,7 @@
     "public",
     "tests",
     "dist",
+    "build",
+    "output",
   ],
 }
