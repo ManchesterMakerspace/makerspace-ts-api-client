@@ -1,4 +1,4 @@
-import { isRefProperty, isObjectProperty, Properties, isArrayProperty, ObjectProperty, Operation, Parameter, isSchemaProperty, Property } from "./types";
+import { isRefProperty, isObjectProperty, Properties, isArrayProperty, ObjectProperty, Operation, Parameter, isSchemaProperty, Property, ApiResponse } from "./types";
 
 
 // TODO: parent argument optional based on internal
@@ -150,10 +150,20 @@ export const createApiFunction = (path: string, method: string, operation: Opera
       apiFunction += `${bodyParam.name}${!bodyParam.required ? "?" : ""}: ${bodyParam.type},\n`;
     })
   }
-    
+
+  const [statusCode, successResponse]: [string, ApiResponse] = Object.entries(operation.responses).find(([statusCode]) => statusCode < "300" && statusCode >= "200");
+  let responseType: string;
+  let responseRoot: string;
+  if (statusCode === "204") {
+    responseType = "void";
+  } else {
+    responseType = isSchemaProperty(successResponse) ? extractTypeFromProperty(successResponse.schema.properties[extractRoot(successResponse.schema)]) : "void";
+    responseRoot = isSchemaProperty(successResponse) ? extractRoot(successResponse.schema) : undefined;
+  }
+  
   // Call base function
   apiFunction += `) => {
-    return makeRequest(
+    return makeRequest<${responseType}>(
       "${method.toUpperCase()}", 
       "${path}"${(pathParams || []).map(param => `.replace("{${param.name}}", ${param.name})`)}`
       
@@ -168,6 +178,17 @@ export const createApiFunction = (path: string, method: string, operation: Opera
     });
   }
 
+  // Pass root in correct position
+  if (responseRoot) {
+    apiFunction += `,
+    `;
+    if (!(hasQueryParams || hasBodyParams)) {
+      apiFunction += "undefined,\n"
+    }
+    apiFunction += `"${responseRoot}"`
+  }
+  
+
   // Close function
   apiFunction += `
     );
@@ -176,3 +197,22 @@ export const createApiFunction = (path: string, method: string, operation: Opera
 
   return apiFunction;
 }
+
+// "responses": {
+//   "200": {
+//     "description": "billing plan discounts found",
+//     "schema": {
+//       "type": "object",
+//       "properties": {
+//         "discounts": {
+//           "type": "array",
+//           "items": {
+//             "$ref": "#/definitions/Discount"
+//           }
+//         }
+//       },
+//       "required": [
+//         "discounts"
+//       ]
+//     }
+//   },

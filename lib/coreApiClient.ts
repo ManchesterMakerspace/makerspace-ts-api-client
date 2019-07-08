@@ -3,6 +3,11 @@ export interface ApiErrorResponse {
   response: Response;
 }
 
+export interface ApiDataResposne<T> {
+  response: Response;
+  data: T
+}
+
 const isObject = (item: any): boolean => !!item && typeof item === 'object';
 export const isApiErrorResponse = (response: any): response is ApiErrorResponse => {
   return isObject(response) && response.errorMessage;
@@ -41,11 +46,12 @@ const parseQueryParams = (params: { [key: string]: any }) =>
     .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
     .join('&');
 
-export const makeRequest = (
+export const makeRequest = <T>(
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", 
   path: string, 
-  params?: { [key: string]: any }
-) => {
+  params?: { [key: string]: any },
+  responseRoot?: string,
+): Promise<ApiDataResposne<T> | ApiErrorResponse> => {
   let body: string;
   let url: string = buildUrl(path);
   if (params) {
@@ -64,7 +70,22 @@ export const makeRequest = (
     },
     method,
     body
-  }).catch((response: Response) => handleError(response));
+  })
+  .then(async (response: Response) => {
+    const r = response.clone();
+    let data;
+    if (responseRoot) {
+      const dataCollection = await r.json()
+      if (dataCollection) {
+        data = dataCollection[responseRoot]
+      }
+    }
+    return {
+      data,
+      response: r,
+    }
+  })
+  .catch((response: Response) => handleError(response));
 };
 
 const getCookie = (name: string): string => {

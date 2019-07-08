@@ -51,7 +51,7 @@ export interface Operation {
   operationId: string;
   parameters: Parameter[];
   responses: {
-    [key: string]: Response
+    [key: string]: ApiResponse
   };
 }
 
@@ -62,7 +62,7 @@ export type Parameter = Property & {
   schema?: Properties;
 }
 
-interface Response {
+export interface ApiResponse {
   description: string;
-  schema?: Properties;
+  schema?: Property;
 }
