@@ -22,6 +22,7 @@ export interface BaseProperty {
 
 export interface BasicProperty extends BaseProperty {
   type: "string" | "number" | "boolean";
+  enum: string[];
 }
 
 export interface RefProperty extends BaseProperty {

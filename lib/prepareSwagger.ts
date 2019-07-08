@@ -1,19 +1,19 @@
-import { isRefProperty, isObjectProperty, Properties, isArrayProperty, ObjectProperty, Operation, Parameter, isSchemaProperty, Property, ApiResponse } from "./types";
-
-
-// TODO: parent argument optional based on internal
-// BodyParams type is just being stringified if object 
-// Function closing after bodyParams looks bad
-// Need lines between functions
+import { isRefProperty, isObjectProperty, Properties, isArrayProperty, ObjectProperty, Operation, Parameter, isSchemaProperty, Property, ApiResponse, BasicProperty } from "./types";
 
 interface TypeCollection {
   [key: string]: string | TypeCollection;
 }
 
-const pathPlaceholder = /{([a-z_A-Z]+)}/g;
+export const enums: string[] = [];
 
-const toCamelCase = (str: string) => str.replace(/(\-\w)/g, matches => matches[1].toUpperCase());
-const extractRoot = (schema: any) => Object.keys(schema.properties).shift();
+
+const toCamelCase = (str: string): string => str.replace(/(\-\w)/g, matches => matches[1].toUpperCase());
+const toTitleCase = (str: string): string => {
+  const camelCase = toCamelCase(str);
+  return str.charAt(0).toUpperCase() + str.substring(1);
+}
+
+const extractRoot = (schema: Properties) => Object.keys(schema.properties).shift();
 const extractTypeFromRef = (defPath: string) => defPath.split("/").pop();
 
 // Reads a property and returns a type ready for insertion
@@ -32,6 +32,31 @@ const extractTypeFromProperty = (property: Property): string => {
   }
 
   return stringifyType(type);
+}
+
+const extractEnumFromProperty = (property: Property, propertyName: string): string => {
+  let typeEnum: string = "";
+  if (!(property as BasicProperty).enum) {
+    return typeEnum;
+  }
+
+  if ((property as BasicProperty).type === "string") {
+    typeEnum = `export enum ${toTitleCase(propertyName)} {
+${(property as BasicProperty).enum.map(enumName => `  ${toTitleCase(enumName)} = "${enumName}"`).join(",\n")}
+}
+`;
+  }
+  return typeEnum;
+}
+const extractEnumsFromProperties = (properties: Properties, baseName: string): string[] => {
+  const enums: string[] = [];
+
+  if (!properties) {
+    return enums;
+  }
+
+  return Object.entries(properties).map(([propertyName, property]) => 
+    extractEnumFromProperty(property, toTitleCase(baseName) + toTitleCase(propertyName))).filter(e => !!e);
 }
 
 const extractTypeFromProperties = (properties: Properties): TypeCollection => {
@@ -71,6 +96,7 @@ ${stringProps.map(sp => `    ${sp}`).join(",\n")}
 
 export const createTypeDefinition = (name: string, definition: ObjectProperty): string => {
   const definitionWithType = extractTypeFromProperties(definition.properties);
+  const enums = extractEnumsFromProperties(definition.properties, name);
 
   let typeDef = `export interface ${name} {\n`
   Object.entries(definitionWithType).forEach(([key, type]) => {
@@ -78,7 +104,10 @@ export const createTypeDefinition = (name: string, definition: ObjectProperty): 
   });
 
   typeDef += `}\n`;
-  return typeDef;
+  
+  const typeEnums = enums.join("\n");
+
+  return (typeEnums.length ? typeEnums + "\n" : "") + typeDef;
 };
 
 export const createApiFunction = (path: string, method: string, operation: Operation): string => {

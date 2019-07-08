@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-import { createTypeDefinition, createApiFunction } from "./prepareSwagger";
+import { createTypeDefinition, createApiFunction, enums } from "./prepareSwagger";
 import { ObjectProperty, PathDefinition } from "./types";
 
 const argv = require('yargs')
@@ -35,6 +35,7 @@ const apiFunctions = Object.entries(swagger.paths as PathDefinition).reduce((fun
 const apiClientString = [
   coreApiClient, 
   ...swagger.basePath ? [`baseApiPath = "${swagger.basePath}";\n`] : [],
+  ...enums,
   ...definitions, 
   ...apiFunctions,
 ];
