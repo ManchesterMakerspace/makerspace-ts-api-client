@@ -73,19 +73,23 @@ export const makeRequest = <T>(
   })
   .then(async (response: Response) => {
     const r = response.clone();
-    let data;
-    if (responseRoot) {
-      const dataCollection = await r.json()
-      if (dataCollection) {
-        data = dataCollection[responseRoot]
+
+    if (r.status >= 200 && r.status < 300) {
+      let data;
+      if (responseRoot) {
+        const dataCollection = await r.json()
+        if (dataCollection) {
+          data = dataCollection[responseRoot]
+        }
       }
+      return {
+        data,
+        response: r,
+      };
+    } else {
+      return handleError(r);
     }
-    return {
-      data,
-      response: r,
-    }
-  })
-  .catch((response: Response) => handleError(response));
+  });
 };
 
 const getCookie = (name: string): string => {
