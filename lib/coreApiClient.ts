@@ -14,28 +14,6 @@ export const isApiErrorResponse = (response: any): response is ApiErrorResponse 
 }
 
 const defaultMessage = "Unknown Error.  Contact an administrator";
-export const handleError = (e: any): ApiErrorResponse => {
-  const apiErrorResponse: ApiErrorResponse = {
-    response: e.response,
-    errorMessage: defaultMessage,
-  }
-
-  if (typeof e === 'string') {
-    console.error(`API Error Recieved: ${e}`);
-  } else if (isObject(e) && isObject(e.response)) {
-    try {
-      const { response: { data: error } } = e;
-      if (isObject(error) && (error.message || error.error)) {
-        apiErrorResponse.errorMessage = error.message || error.error;
-      }
-    } catch (parseError) {
-      console.error(`Error handling API Error: ${parseError}`);
-    }
-  }
-
-  return apiErrorResponse;
-};
-
 let baseUrl: string = process.env.BASE_URL || "";
 let baseApiPath: string = "";
 export const setBaseApiPath = (path: string) => baseApiPath = path;
@@ -72,22 +50,29 @@ export const makeRequest = <T>(
     body
   })
   .then(async (response: Response) => {
-    const r = response.clone();
+    const result: ApiDataResposne<T> = {
+      response: response.clone(),
+      data: undefined
+    }
 
-    if (r.status >= 200 && r.status < 300) {
-      let data;
-      if (responseRoot) {
-        const dataCollection = await r.json()
-        if (dataCollection) {
-          data = dataCollection[responseRoot]
-        }
+    try {
+      const dataCollection = await result.response.json()
+      if (dataCollection) {
+        result.data = responseRoot ? dataCollection[responseRoot] : dataCollection;
       }
-      return {
-        data,
-        response: r,
-      };
+    } catch { }
+
+    if (result.response.status >= 200 && result.response.status < 300) {
+      return result;
     } else {
-      return handleError(r);
+      return {
+        response: result.response,
+        error: result.data || {
+          status: 500,
+          message: defaultMessage,
+          error: "internal_server_error"
+        },
+      } as ApiErrorResponse;
     }
   });
 };
