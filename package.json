@@ -9,7 +9,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "makerspace-ts-api-client-generator": "../makerspace-ts-api-client-generator"
+    "makerspace-ts-api-client-generator": "^0.1.0"
   },
   "devDependencies": {
     "@types/node": "^12.6.2",
