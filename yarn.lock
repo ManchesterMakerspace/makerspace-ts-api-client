@@ -6,9 +6,9 @@
   version "12.6.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.6.2.tgz#a5ccec6abb6060d5f20d256fb03ed743e9774999"
 
-makerspace-ts-api-client-generator@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/makerspace-ts-api-client-generator/-/makerspace-ts-api-client-generator-0.1.0.tgz#e288bcc000e9e298a6578b058591119400846606"
+makerspace-ts-api-client-generator@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/makerspace-ts-api-client-generator/-/makerspace-ts-api-client-generator-0.1.5.tgz#17ebf30dac4d4f3604c0d1d3d26fd85b0389e198"
 
 typescript@^3.5.2:
   version "3.5.3"
