@@ -5,6 +5,6 @@
     "vendor",
     "public",
     "tests",
-    "build",
+    "dist",
   ],
 }

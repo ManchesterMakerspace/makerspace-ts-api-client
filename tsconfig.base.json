@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "declaration": false,
+    "declaration": true,
     "baseUrl": ".",
-    "outDir": "./build",
+    "outDir": "./dist",
     "paths": {
       "*": [
         "*",
-        "dist/*"
+        "lib/*"
       ]
     },
     "emitDecoratorMetadata": true,
