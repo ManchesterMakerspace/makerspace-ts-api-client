@@ -341,12 +341,12 @@ export interface Transaction {
   memberName: string;
 }
 
-export const adminListBillingPlans = (params?: { 
+export function adminListBillingPlans(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
     types?: string[],
-}) => {
+}) {
     return makeRequest<Plan[]>(
       "GET", 
       "/admin/billing/plans",
@@ -355,13 +355,13 @@ export const adminListBillingPlans = (params?: {
     );
   }
   
-export const adminListBillingPlanDiscounts = (params?: { 
+export function adminListBillingPlanDiscounts(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
     subscriptionOnly?: boolean,
     types?: string[],
-}) => {
+}) {
     return makeRequest<Discount[]>(
       "GET", 
       "/admin/billing/plans/discounts",
@@ -370,7 +370,7 @@ export const adminListBillingPlanDiscounts = (params?: {
     );
   }
   
-export const adminListSubscriptions = () => {
+export function adminListSubscriptions() {
     return makeRequest<Subscription[]>(
       "GET", 
       "/admin/billing/subscriptions",
@@ -379,14 +379,14 @@ export const adminListSubscriptions = () => {
     );
   }
   
-export const adminCancelSubscription = (id: string) => {
+export function adminCancelSubscription(id: string) {
     return makeRequest<void>(
       "DELETE", 
       "/admin/billing/subscriptions/{id}".replace("{id}", id)
     );
   }
   
-export const adminListTransaction = (params?: { 
+export function adminListTransaction(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -394,7 +394,7 @@ export const adminListTransaction = (params?: {
     searchBy?: string,
     endDate?: string,
     startDate?: string,
-}) => {
+}) {
     return makeRequest<Transaction[]>(
       "GET", 
       "/admin/billing/transactions",
@@ -403,7 +403,7 @@ export const adminListTransaction = (params?: {
     );
   }
   
-export const adminGetTransaction = (id: string) => {
+export function adminGetTransaction(id: string) {
     return makeRequest<Transaction>(
       "GET", 
       "/admin/billing/transactions/{id}".replace("{id}", id),
@@ -412,14 +412,14 @@ export const adminGetTransaction = (id: string) => {
     );
   }
   
-export const adminDeleteTransaction = (id: string) => {
+export function adminDeleteTransaction(id: string) {
     return makeRequest<void>(
       "DELETE", 
       "/admin/billing/transactions/{id}".replace("{id}", id)
     );
   }
   
-export const adminGetNewCard = () => {
+export function adminGetNewCard() {
     return makeRequest<{
     uid: string
   }>(
@@ -430,9 +430,9 @@ export const adminGetNewCard = () => {
     );
   }
   
-export const adminListCards = (params: { 
+export function adminListCards(params: { 
     memberId: string,
-}) => {
+}) {
     return makeRequest<Card[]>(
       "GET", 
       "/admin/cards",
@@ -441,12 +441,12 @@ export const adminListCards = (params: {
     );
   }
   
-export const adminCreateCard = (createAccessCardDetails: {
+export function adminCreateCard(createAccessCardDetails: {
     memberId: string,
     uid: string,
     cardLocation: string
   },
-) => {
+) {
     return makeRequest<Card>(
       "POST", 
       "/admin/cards",
@@ -455,12 +455,12 @@ export const adminCreateCard = (createAccessCardDetails: {
     );
   }
   
-export const adminUpdateCard = (id: string, updateAccessCardDetails: {
+export function adminUpdateCard(id: string, updateAccessCardDetails: {
     memberId: string,
     uid: string,
     cardLocation: string
   },
-) => {
+) {
     return makeRequest<Card>(
       "PUT", 
       "/admin/cards/{id}".replace("{id}", id),
@@ -469,11 +469,11 @@ export const adminUpdateCard = (id: string, updateAccessCardDetails: {
     );
   }
   
-export const adminGetEarnedMembershipReports = (id: string, params?: { 
+export function adminGetEarnedMembershipReports(id: string, params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
-}) => {
+}) {
     return makeRequest<Report[]>(
       "GET", 
       "/admin/earned_memberships/{id}/reports".replace("{id}", id),
@@ -482,11 +482,11 @@ export const adminGetEarnedMembershipReports = (id: string, params?: {
     );
   }
   
-export const adminListEarnedMembership = (params?: { 
+export function adminListEarnedMembership(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
-}) => {
+}) {
     return makeRequest<EarnedMembership[]>(
       "GET", 
       "/admin/earned_memberships",
@@ -495,8 +495,8 @@ export const adminListEarnedMembership = (params?: {
     );
   }
   
-export const adminCreateEarnedMembership = (createEarnedMembershipDetails: EarnedMembership,
-) => {
+export function adminCreateEarnedMembership(createEarnedMembershipDetails: EarnedMembership,
+) {
     return makeRequest<EarnedMembership>(
       "POST", 
       "/admin/earned_memberships",
@@ -505,7 +505,7 @@ export const adminCreateEarnedMembership = (createEarnedMembershipDetails: Earne
     );
   }
   
-export const adminGetEarnedMembership = (id: string) => {
+export function adminGetEarnedMembership(id: string) {
     return makeRequest<EarnedMembership>(
       "GET", 
       "/admin/earned_memberships/{id}".replace("{id}", id),
@@ -514,8 +514,8 @@ export const adminGetEarnedMembership = (id: string) => {
     );
   }
   
-export const adminUpdateEarnedMembership = (id: string, updateEarnedMembershipDetails: EarnedMembership,
-) => {
+export function adminUpdateEarnedMembership(id: string, updateEarnedMembershipDetails: EarnedMembership,
+) {
     return makeRequest<EarnedMembership>(
       "PUT", 
       "/admin/earned_memberships/{id}".replace("{id}", id),
@@ -524,8 +524,8 @@ export const adminUpdateEarnedMembership = (id: string, updateEarnedMembershipDe
     );
   }
   
-export const adminCreateInvoiceOption = (createInvoiceOptionDetails: InvoiceOption,
-) => {
+export function adminCreateInvoiceOption(createInvoiceOptionDetails: InvoiceOption,
+) {
     return makeRequest<InvoiceOption>(
       "POST", 
       "/admin/invoice_options",
@@ -534,8 +534,8 @@ export const adminCreateInvoiceOption = (createInvoiceOptionDetails: InvoiceOpti
     );
   }
   
-export const adminUpdateInvoiceOption = (id: string, updateInvoiceOptionDetails: InvoiceOption,
-) => {
+export function adminUpdateInvoiceOption(id: string, updateInvoiceOptionDetails: InvoiceOption,
+) {
     return makeRequest<InvoiceOption>(
       "PUT", 
       "/admin/invoice_options/{id}".replace("{id}", id),
@@ -544,19 +544,19 @@ export const adminUpdateInvoiceOption = (id: string, updateInvoiceOptionDetails:
     );
   }
   
-export const adminDeleteInvoiceOption = (id: string) => {
+export function adminDeleteInvoiceOption(id: string) {
     return makeRequest<void>(
       "DELETE", 
       "/admin/invoice_options/{id}".replace("{id}", id)
     );
   }
   
-export const adminListInvoices = (params?: { 
+export function adminListInvoices(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
     resourceId?: string,
-}) => {
+}) {
     return makeRequest<Invoice[]>(
       "GET", 
       "/admin/invoices",
@@ -565,13 +565,13 @@ export const adminListInvoices = (params?: {
     );
   }
   
-export const adminCreateInvoices = (createInvoiceDetails: {
+export function adminCreateInvoices(createInvoiceDetails: {
     id: string,
     discountId: string,
     memberId: string,
     resourceId: string
   },
-) => {
+) {
     return makeRequest<Invoice>(
       "POST", 
       "/admin/invoices",
@@ -580,8 +580,8 @@ export const adminCreateInvoices = (createInvoiceDetails: {
     );
   }
   
-export const adminUpdateInvoice = (id: string, updateInvoiceDetails: Invoice,
-) => {
+export function adminUpdateInvoice(id: string, updateInvoiceDetails: Invoice,
+) {
     return makeRequest<Invoice>(
       "PUT", 
       "/admin/invoices/{id}".replace("{id}", id),
@@ -590,15 +590,15 @@ export const adminUpdateInvoice = (id: string, updateInvoiceDetails: Invoice,
     );
   }
   
-export const adminDeleteInvoice = (id: string) => {
+export function adminDeleteInvoice(id: string) {
     return makeRequest<void>(
       "DELETE", 
       "/admin/invoices/{id}".replace("{id}", id)
     );
   }
   
-export const adminCreateMember = (createMemberDetails: Member,
-) => {
+export function adminCreateMember(createMemberDetails: Member,
+) {
     return makeRequest<Member>(
       "POST", 
       "/admin/members",
@@ -607,8 +607,8 @@ export const adminCreateMember = (createMemberDetails: Member,
     );
   }
   
-export const adminUpdateMember = (id: string, updateMemberDetails: Member,
-) => {
+export function adminUpdateMember(id: string, updateMemberDetails: Member,
+) {
     return makeRequest<Member>(
       "PUT", 
       "/admin/members/{id}".replace("{id}", id),
@@ -617,12 +617,12 @@ export const adminUpdateMember = (id: string, updateMemberDetails: Member,
     );
   }
   
-export const amdinListRentals = (params?: { 
+export function amdinListRentals(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
     memberId?: string,
-}) => {
+}) {
     return makeRequest<Rental[]>(
       "GET", 
       "/admin/rentals",
@@ -631,8 +631,8 @@ export const amdinListRentals = (params?: {
     );
   }
   
-export const adminCreateRental = (createRentalDetails: Rental,
-) => {
+export function adminCreateRental(createRentalDetails: Rental,
+) {
     return makeRequest<Rental>(
       "POST", 
       "/admin/rentals",
@@ -641,8 +641,8 @@ export const adminCreateRental = (createRentalDetails: Rental,
     );
   }
   
-export const adminUpdateRental = (id: string, updateRentalDetails: Rental,
-) => {
+export function adminUpdateRental(id: string, updateRentalDetails: Rental,
+) {
     return makeRequest<Rental>(
       "PUT", 
       "/admin/rentals/{id}".replace("{id}", id),
@@ -651,7 +651,7 @@ export const adminUpdateRental = (id: string, updateRentalDetails: Rental,
     );
   }
   
-export const getNewPaymentMethod = () => {
+export function getNewPaymentMethod() {
     return makeRequest<string>(
       "GET", 
       "/billing/payment_methods/new",
@@ -660,7 +660,7 @@ export const getNewPaymentMethod = () => {
     );
   }
   
-export const listPaymentMethods = () => {
+export function listPaymentMethods() {
     return makeRequest<CreditCard[]>(
       "GET", 
       "/billing/payment_methods",
@@ -669,11 +669,11 @@ export const listPaymentMethods = () => {
     );
   }
   
-export const createPaymentMethod = (createPaymentMethodDetails: {
+export function createPaymentMethod(createPaymentMethodDetails: {
     payment_method_nonce: string,
     make_default: string
   },
-) => {
+) {
     return makeRequest<CreditCard>(
       "POST", 
       "/billing/payment_methods",
@@ -682,14 +682,14 @@ export const createPaymentMethod = (createPaymentMethodDetails: {
     );
   }
   
-export const deletePaymentMethod = (id: string) => {
+export function deletePaymentMethod(id: string) {
     return makeRequest<void>(
       "DELETE", 
       "/billing/payment_methods/{id}".replace("{id}", id)
     );
   }
   
-export const listSubscriptions = (id: string) => {
+export function listSubscriptions(id: string) {
     return makeRequest<Subscription>(
       "GET", 
       "/billing/subscriptions/{id}".replace("{id}", id),
@@ -698,10 +698,10 @@ export const listSubscriptions = (id: string) => {
     );
   }
   
-export const updateSubscription = (id: string, updateSubscriptionDetails: {
+export function updateSubscription(id: string, updateSubscriptionDetails: {
     payment_method_token: string
   },
-) => {
+) {
     return makeRequest<Subscription>(
       "PUT", 
       "/billing/subscriptions/{id}".replace("{id}", id),
@@ -710,18 +710,18 @@ export const updateSubscription = (id: string, updateSubscriptionDetails: {
     );
   }
   
-export const cancelSubscription = (id: string) => {
+export function cancelSubscription(id: string) {
     return makeRequest<void>(
       "DELETE", 
       "/billing/subscriptions/{id}".replace("{id}", id)
     );
   }
   
-export const listTransactions = (params?: { 
+export function listTransactions(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
-}) => {
+}) {
     return makeRequest<Transaction[]>(
       "GET", 
       "/billing/transactions",
@@ -730,11 +730,11 @@ export const listTransactions = (params?: {
     );
   }
   
-export const createTransaction = (createTransactionDetails: {
+export function createTransaction(createTransactionDetails: {
     id: string,
     discountId: string
   },
-) => {
+) {
     return makeRequest<Transaction>(
       "POST", 
       "/billing/transactions",
@@ -743,18 +743,18 @@ export const createTransaction = (createTransactionDetails: {
     );
   }
   
-export const deleteTransaction = (id: string) => {
+export function deleteTransaction(id: string) {
     return makeRequest<void>(
       "DELETE", 
       "/billing/transactions/{id}".replace("{id}", id)
     );
   }
   
-export const listEarnedMembershipReports = (id: string, params?: { 
+export function listEarnedMembershipReports(id: string, params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
-}) => {
+}) {
     return makeRequest<Report[]>(
       "GET", 
       "/earned_memberships/{id}/reports".replace("{id}", id),
@@ -763,7 +763,7 @@ export const listEarnedMembershipReports = (id: string, params?: {
     );
   }
   
-export const createEarnedMembershipReport = (id: string, createEarnedMembershipReportDetails: {
+export function createEarnedMembershipReport(id: string, createEarnedMembershipReportDetails: {
     earnedMembershipId: string,
     reportRequirements: {
     requirementId: string,
@@ -771,7 +771,7 @@ export const createEarnedMembershipReport = (id: string, createEarnedMembershipR
     memberIds: string[]
   }[]
   },
-) => {
+) {
     return makeRequest<Report>(
       "POST", 
       "/earned_memberships/{id}/reports".replace("{id}", id),
@@ -780,7 +780,7 @@ export const createEarnedMembershipReport = (id: string, createEarnedMembershipR
     );
   }
   
-export const getEarnedMembership = (id: string) => {
+export function getEarnedMembership(id: string) {
     return makeRequest<EarnedMembership>(
       "GET", 
       "/earned_memberships/{id}".replace("{id}", id),
@@ -789,13 +789,13 @@ export const getEarnedMembership = (id: string) => {
     );
   }
   
-export const listInvoiceOptions = (params?: { 
+export function listInvoiceOptions(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
     subscriptionOnly?: boolean,
     types?: string[],
-}) => {
+}) {
     return makeRequest<InvoiceOption[]>(
       "GET", 
       "/invoice_options",
@@ -804,11 +804,11 @@ export const listInvoiceOptions = (params?: {
     );
   }
   
-export const listInvoices = (params?: { 
+export function listInvoices(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
-}) => {
+}) {
     return makeRequest<Invoice[]>(
       "GET", 
       "/invoices",
@@ -817,11 +817,11 @@ export const listInvoices = (params?: {
     );
   }
   
-export const createInvoice = (createInvoiceDetails: {
+export function createInvoice(createInvoiceDetails: {
     id: string,
     discountId: string
   },
-) => {
+) {
     return makeRequest<Invoice>(
       "POST", 
       "/invoices",
@@ -830,7 +830,7 @@ export const createInvoice = (createInvoiceDetails: {
     );
   }
   
-export const listMembersPermissions = (id: string) => {
+export function listMembersPermissions(id: string) {
     return makeRequest<{ [key: string]: string }>(
       "GET", 
       "/members/{id}/permissions".replace("{id}", id),
@@ -839,12 +839,12 @@ export const listMembersPermissions = (id: string) => {
     );
   }
   
-export const listMembers = (params?: { 
+export function listMembers(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
     currentMembers?: boolean,
-}) => {
+}) {
     return makeRequest<Member[]>(
       "GET", 
       "/members",
@@ -853,13 +853,13 @@ export const listMembers = (params?: {
     );
   }
   
-export const registerMember = (registerMemberDetails: {
+export function registerMember(registerMemberDetails: {
     email: string,
     password: string,
     firstname: string,
     lastname: string
   },
-) => {
+) {
     return makeRequest<Member>(
       "POST", 
       "/members",
@@ -868,7 +868,7 @@ export const registerMember = (registerMemberDetails: {
     );
   }
   
-export const getMember = (id: string) => {
+export function getMember(id: string) {
     return makeRequest<Member>(
       "GET", 
       "/members/{id}".replace("{id}", id),
@@ -877,13 +877,13 @@ export const getMember = (id: string) => {
     );
   }
   
-export const updateMember = (id: string, updateMemberDetails: {
+export function updateMember(id: string, updateMemberDetails: {
     firstname: string,
     lastname: string,
     email: string,
     signature: string
   },
-) => {
+) {
     return makeRequest<Member>(
       "PUT", 
       "/members/{id}".replace("{id}", id),
@@ -892,11 +892,11 @@ export const updateMember = (id: string, updateMemberDetails: {
     );
   }
   
-export const signIn = (signInDetails?: {
+export function signIn(signInDetails?: {
     email: string,
     password: string
   },
-) => {
+) {
     return makeRequest<Member>(
       "POST", 
       "/members/sign_in",
@@ -905,17 +905,17 @@ export const signIn = (signInDetails?: {
     );
   }
   
-export const signOut = () => {
+export function signOut() {
     return makeRequest<void>(
       "DELETE", 
       "/members/sign_out"
     );
   }
   
-export const requestPasswordReset = (passwordResetDetails: {
+export function requestPasswordReset(passwordResetDetails: {
     email: string
   },
-) => {
+) {
     return makeRequest<void>(
       "POST", 
       "/members/password",
@@ -923,11 +923,11 @@ export const requestPasswordReset = (passwordResetDetails: {
     );
   }
   
-export const resetPassword = (passwordResetDetails: {
+export function resetPassword(passwordResetDetails: {
     resetPasswordToken: string,
     password: string
   },
-) => {
+) {
     return makeRequest<void>(
       "PUT", 
       "/members/password",
@@ -935,11 +935,11 @@ export const resetPassword = (passwordResetDetails: {
     );
   }
   
-export const listRentals = (params?: { 
+export function listRentals(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
-}) => {
+}) {
     return makeRequest<Rental[]>(
       "GET", 
       "/rentals",
@@ -948,7 +948,7 @@ export const listRentals = (params?: {
     );
   }
   
-export const getRental = (id: string) => {
+export function getRental(id: string) {
     return makeRequest<Rental>(
       "GET", 
       "/rentals/{id}".replace("{id}", id),
