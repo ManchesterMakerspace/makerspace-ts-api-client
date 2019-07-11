@@ -1,18 +1,18 @@
 {
   "name": "makerspace-ts-api-client",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "main": "dist/apiClient.js",
   "types": "dist/apiClient.d.ts",
   "author": "Will Lynch <will.lynch91@gmail.com>",
   "license": "MIT",
   "scripts": {
     "generate": "$(npm bin)/makerspace-ts-api-client-generator generate",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublish": "tsc"
   },
   "devDependencies": {
     "@types/node": "^12.6.2",
-    "makerspace-ts-api-client-generator": "^0.1.6",
+    "makerspace-ts-api-client-generator": "^0.1.7",
     "typescript": "^3.5.2"
-  },
-  "prepublish": "tsc"
+  }
 }
