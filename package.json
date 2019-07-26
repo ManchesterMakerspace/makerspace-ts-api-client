@@ -6,7 +6,7 @@
   "author": "Will Lynch <will.lynch91@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "generate": "$(npm bin)/makerspace-ts-api-client-generator generate",
+    "generate": "$(npm bin)/makerspace-ts-api-client-generator generate -o ./lib",
     "build": "tsc",
     "prepublish": "tsc"
   },
