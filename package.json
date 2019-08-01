@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@types/node": "^12.6.2",
-    "makerspace-ts-api-client-generator": "^0.1.10",
+    "makerspace-ts-api-client-generator": "^0.1.11",
     "typescript": "^3.5.2"
   }
 }

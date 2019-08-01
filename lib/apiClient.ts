@@ -24,14 +24,14 @@ let baseApiPath: string = "";
 export const setBaseApiPath = (path: string) => baseApiPath = path;
 
 const buildUrl = (path: string): string => `${baseUrl}${baseApiPath}${path}`;
-const parseQueryParams = (params: { [key: string]: any }) => 
+const parseQueryParams = (params: { [key: string]: any }) =>
   Object.keys(params)
     .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
     .join('&');
 
 export const makeRequest = <T>(
-  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", 
-  path: string, 
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+  path: string,
   params?: { [key: string]: any },
   responseRoot?: string,
 ): Promise<ApiDataResponse<T> | ApiErrorResponse> => {
@@ -117,6 +117,9 @@ export interface Card {
 }
 
 export interface CreditCard {
+  id: string;
+  default: boolean;
+  paymentType?: string;
   customerId: string;
   imageUrl: string;
   subscriptions: Subscription[];
@@ -142,6 +145,11 @@ export interface Dispute {
   amountDisputed: number;
   status: string;
   transaction: Transaction;
+}
+
+export interface NewEarnedMembership {
+  memberId: string;
+  requirements: NewRequirement[];
 }
 
 export enum EarnedMembershipMemberStatus {
@@ -187,6 +195,18 @@ export interface Invoice {
   quantity: number;
   discountId?: string;
   memberName: string;
+  memberId: string;
+}
+
+export interface NewInvoiceOption {
+  name: string;
+  description: string;
+  amount: string;
+  planId?: string;
+  resourceClass: string;
+  quantity: number;
+  discountId?: string;
+  disabled: boolean;
 }
 
 export interface InvoiceOption {
@@ -199,6 +219,27 @@ export interface InvoiceOption {
   quantity: number;
   discountId?: string;
   disabled: boolean;
+}
+
+export enum NewMemberStatus {
+  ActiveMember = "activeMember",
+  Inactive = "inactive",
+  NonMember = "nonMember",
+  Revoked = "revoked"
+}
+
+export enum NewMemberRole {
+  Admin = "admin",
+  Member = "member"
+}
+
+export interface NewMember {
+  firstname: string;
+  lastname: string;
+  email: string;
+  status: string;
+  role: string;
+  memberContractOnFile: boolean;
 }
 
 export enum MemberStatus {
@@ -229,6 +270,9 @@ export interface Member {
 }
 
 export interface PayPalAccount {
+  id: string;
+  default: boolean;
+  paymentType?: string;
   customerId: string;
   imageUrl: string;
   subscriptions: Subscription[];
@@ -249,6 +293,14 @@ export interface Plan {
   }[];
 }
 
+export interface NewRequirement {
+  name: string;
+  rolloverLimit: number;
+  termLength: number;
+  targetCount: number;
+  strict: boolean;
+}
+
 export interface Requirement {
   id: string;
   earnedMembershipId: string;
@@ -264,6 +316,12 @@ export interface Requirement {
   satisfied: boolean;
 }
 
+export interface NewReportRequirement {
+  requirementId: string;
+  reportedCount: number;
+  memberIds: string[];
+}
+
 export interface ReportRequirement {
   id: string;
   requirementId: string;
@@ -276,11 +334,23 @@ export interface ReportRequirement {
   satisfied: boolean;
 }
 
+export interface NewReport {
+  earnedMembershipId: string;
+  reportRequirements: NewReportRequirement[];
+}
+
 export interface Report {
   id: string;
   date: string;
   earnedMembershipId: string;
   reportRequirements: EarnedMembership[];
+}
+
+export interface NewRental {
+  number: string;
+  description: string;
+  memberId: string;
+  expiration: number;
 }
 
 export interface Rental {
@@ -341,21 +411,21 @@ export interface Transaction {
   memberName: string;
 }
 
-export function adminListBillingPlans(params?: { 
+export function adminListBillingPlans(params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
     types?: string[],
 }) {
     return makeRequest<Plan[]>(
-      "GET", 
+      "GET",
       "/admin/billing/plans",
     params,
     "plans"
     );
   }
-  
-export function adminListBillingPlanDiscounts(params?: { 
+
+export function adminListBillingPlanDiscounts(params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -363,30 +433,30 @@ export function adminListBillingPlanDiscounts(params?: {
     types?: string[],
 }) {
     return makeRequest<Discount[]>(
-      "GET", 
+      "GET",
       "/admin/billing/plans/discounts",
     params,
     "discounts"
     );
   }
-  
+
 export function adminListSubscriptions() {
     return makeRequest<Subscription[]>(
-      "GET", 
+      "GET",
       "/admin/billing/subscriptions",
     undefined,
 "subscriptions"
     );
   }
-  
+
 export function adminCancelSubscription(id: string) {
     return makeRequest<void>(
-      "DELETE", 
+      "DELETE",
       "/admin/billing/subscriptions/{id}".replace("{id}", id)
     );
   }
-  
-export function adminListTransaction(params?: { 
+
+export function adminListTransaction(params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -396,51 +466,51 @@ export function adminListTransaction(params?: {
     startDate?: string,
 }) {
     return makeRequest<Transaction[]>(
-      "GET", 
+      "GET",
       "/admin/billing/transactions",
     params,
     "transactions"
     );
   }
-  
+
 export function adminGetTransaction(id: string) {
     return makeRequest<Transaction>(
-      "GET", 
+      "GET",
       "/admin/billing/transactions/{id}".replace("{id}", id),
     undefined,
 "transaction"
     );
   }
-  
+
 export function adminDeleteTransaction(id: string) {
     return makeRequest<void>(
-      "DELETE", 
+      "DELETE",
       "/admin/billing/transactions/{id}".replace("{id}", id)
     );
   }
-  
+
 export function adminGetNewCard() {
     return makeRequest<{
     uid: string
   }>(
-      "GET", 
+      "GET",
       "/admin/cards/new",
     undefined,
 "card"
     );
   }
-  
-export function adminListCards(params: { 
+
+export function adminListCards(params: {
     memberId: string,
 }) {
     return makeRequest<Card[]>(
-      "GET", 
+      "GET",
       "/admin/cards",
     params,
     "cards"
     );
   }
-  
+
 export function adminCreateCard(createAccessCardDetails: {
     memberId: string,
     uid: string,
@@ -448,13 +518,13 @@ export function adminCreateCard(createAccessCardDetails: {
   },
 ) {
     return makeRequest<Card>(
-      "POST", 
+      "POST",
       "/admin/cards",
     { card: createAccessCardDetails },
     "card"
     );
   }
-  
+
 export function adminUpdateCard(id: string, updateAccessCardDetails: {
     memberId: string,
     uid: string,
@@ -462,334 +532,334 @@ export function adminUpdateCard(id: string, updateAccessCardDetails: {
   },
 ) {
     return makeRequest<Card>(
-      "PUT", 
+      "PUT",
       "/admin/cards/{id}".replace("{id}", id),
     { card: updateAccessCardDetails },
     "card"
     );
   }
-  
-export function adminGetEarnedMembershipReports(id: string, params?: { 
+
+export function adminListEarnedMembershipReports(id: string, params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
 }) {
     return makeRequest<Report[]>(
-      "GET", 
+      "GET",
       "/admin/earned_memberships/{id}/reports".replace("{id}", id),
     params,
     "reports"
     );
   }
-  
-export function adminListEarnedMembership(params?: { 
+
+export function adminListEarnedMemberships(params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
 }) {
     return makeRequest<EarnedMembership[]>(
-      "GET", 
+      "GET",
       "/admin/earned_memberships",
     params,
     "earnedMemberships"
     );
   }
-  
-export function adminCreateEarnedMembership(createEarnedMembershipDetails: EarnedMembership,
+
+export function adminCreateEarnedMembership(createEarnedMembershipDetails: NewEarnedMembership,
 ) {
     return makeRequest<EarnedMembership>(
-      "POST", 
+      "POST",
       "/admin/earned_memberships",
     { earnedMembership: createEarnedMembershipDetails },
     "earnedMembership"
     );
   }
-  
+
 export function adminGetEarnedMembership(id: string) {
     return makeRequest<EarnedMembership>(
-      "GET", 
+      "GET",
       "/admin/earned_memberships/{id}".replace("{id}", id),
     undefined,
 "earnedMembership"
     );
   }
-  
+
 export function adminUpdateEarnedMembership(id: string, updateEarnedMembershipDetails: EarnedMembership,
 ) {
     return makeRequest<EarnedMembership>(
-      "PUT", 
+      "PUT",
       "/admin/earned_memberships/{id}".replace("{id}", id),
     { earnedMembership: updateEarnedMembershipDetails },
     "earnedMembership"
     );
   }
-  
-export function adminCreateInvoiceOption(createInvoiceOptionDetails: InvoiceOption,
+
+export function adminCreateInvoiceOption(createInvoiceOptionDetails: NewInvoiceOption,
 ) {
     return makeRequest<InvoiceOption>(
-      "POST", 
+      "POST",
       "/admin/invoice_options",
     { invoiceOption: createInvoiceOptionDetails },
     "invoiceOption"
     );
   }
-  
+
 export function adminUpdateInvoiceOption(id: string, updateInvoiceOptionDetails: InvoiceOption,
 ) {
     return makeRequest<InvoiceOption>(
-      "PUT", 
+      "PUT",
       "/admin/invoice_options/{id}".replace("{id}", id),
     { invoiceOption: updateInvoiceOptionDetails },
     "invoiceOption"
     );
   }
-  
+
 export function adminDeleteInvoiceOption(id: string) {
     return makeRequest<void>(
-      "DELETE", 
+      "DELETE",
       "/admin/invoice_options/{id}".replace("{id}", id)
     );
   }
-  
-export function adminListInvoices(params?: { 
+
+export function adminListInvoices(params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
     resourceId?: string,
 }) {
     return makeRequest<Invoice[]>(
-      "GET", 
+      "GET",
       "/admin/invoices",
     params,
     "invoices"
     );
   }
-  
+
 export function adminCreateInvoices(createInvoiceDetails: {
     id: string,
-    discountId: string,
+    discountId?: string,
     memberId: string,
     resourceId: string
   },
 ) {
     return makeRequest<Invoice>(
-      "POST", 
+      "POST",
       "/admin/invoices",
     { invoiceOption: createInvoiceDetails },
     "invoice"
     );
   }
-  
+
 export function adminUpdateInvoice(id: string, updateInvoiceDetails: Invoice,
 ) {
     return makeRequest<Invoice>(
-      "PUT", 
+      "PUT",
       "/admin/invoices/{id}".replace("{id}", id),
     { invoice: updateInvoiceDetails },
     "invoice"
     );
   }
-  
+
 export function adminDeleteInvoice(id: string) {
     return makeRequest<void>(
-      "DELETE", 
+      "DELETE",
       "/admin/invoices/{id}".replace("{id}", id)
     );
   }
-  
-export function adminCreateMember(createMemberDetails: Member,
+
+export function adminCreateMember(createMemberDetails: NewMember,
 ) {
     return makeRequest<Member>(
-      "POST", 
+      "POST",
       "/admin/members",
     { member: createMemberDetails },
     "member"
     );
   }
-  
+
 export function adminUpdateMember(id: string, updateMemberDetails: Member,
 ) {
     return makeRequest<Member>(
-      "PUT", 
+      "PUT",
       "/admin/members/{id}".replace("{id}", id),
     { member: updateMemberDetails },
     "member"
     );
   }
-  
-export function amdinListRentals(params?: { 
+
+export function adminListRentals(params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
     memberId?: string,
 }) {
     return makeRequest<Rental[]>(
-      "GET", 
+      "GET",
       "/admin/rentals",
     params,
     "rentals"
     );
   }
-  
-export function adminCreateRental(createRentalDetails: Rental,
+
+export function adminCreateRental(createRentalDetails: NewRental,
 ) {
     return makeRequest<Rental>(
-      "POST", 
+      "POST",
       "/admin/rentals",
     { rental: createRentalDetails },
     "rental"
     );
   }
-  
+
 export function adminUpdateRental(id: string, updateRentalDetails: Rental,
 ) {
     return makeRequest<Rental>(
-      "PUT", 
+      "PUT",
       "/admin/rentals/{id}".replace("{id}", id),
     { rental: updateRentalDetails },
     "rental"
     );
   }
-  
+
+export function adminDeleteRental(id: string) {
+    return makeRequest<void>(
+      "DELETE",
+      "/admin/rentals/{id}".replace("{id}", id)
+    );
+  }
+
 export function getNewPaymentMethod() {
     return makeRequest<string>(
-      "GET", 
+      "GET",
       "/billing/payment_methods/new",
     undefined,
 "clientToken"
     );
   }
-  
+
 export function listPaymentMethods() {
     return makeRequest<CreditCard[]>(
-      "GET", 
+      "GET",
       "/billing/payment_methods",
     undefined,
 "paymentMethods"
     );
   }
-  
+
 export function createPaymentMethod(createPaymentMethodDetails: {
     payment_method_nonce: string,
-    make_default: string
+    make_default: boolean
   },
 ) {
     return makeRequest<CreditCard>(
-      "POST", 
+      "POST",
       "/billing/payment_methods",
     { payment_method: createPaymentMethodDetails },
     "paymentMethod"
     );
   }
-  
+
 export function deletePaymentMethod(id: string) {
     return makeRequest<void>(
-      "DELETE", 
+      "DELETE",
       "/billing/payment_methods/{id}".replace("{id}", id)
     );
   }
-  
-export function listSubscriptions(id: string) {
+
+export function getSubscription(id: string) {
     return makeRequest<Subscription>(
-      "GET", 
+      "GET",
       "/billing/subscriptions/{id}".replace("{id}", id),
     undefined,
 "subscription"
     );
   }
-  
+
 export function updateSubscription(id: string, updateSubscriptionDetails: {
-    payment_method_token: string
+    paymentMethodToken: string
   },
 ) {
     return makeRequest<Subscription>(
-      "PUT", 
+      "PUT",
       "/billing/subscriptions/{id}".replace("{id}", id),
     { subscription: updateSubscriptionDetails },
     "subscription"
     );
   }
-  
+
 export function cancelSubscription(id: string) {
     return makeRequest<void>(
-      "DELETE", 
+      "DELETE",
       "/billing/subscriptions/{id}".replace("{id}", id)
     );
   }
-  
-export function listTransactions(params?: { 
+
+export function listTransactions(params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
 }) {
     return makeRequest<Transaction[]>(
-      "GET", 
+      "GET",
       "/billing/transactions",
     params,
     "transactions"
     );
   }
-  
+
 export function createTransaction(createTransactionDetails: {
-    id: string,
-    discountId: string
+    invoiceId: string,
+    paymentMethodId: string
   },
 ) {
     return makeRequest<Transaction>(
-      "POST", 
+      "POST",
       "/billing/transactions",
-    { transaction: createTransactionDetails },
+    { invoiceId: createTransactionDetails },
     "transaction"
     );
   }
-  
+
 export function deleteTransaction(id: string) {
     return makeRequest<void>(
-      "DELETE", 
+      "DELETE",
       "/billing/transactions/{id}".replace("{id}", id)
     );
   }
-  
-export function listEarnedMembershipReports(id: string, params?: { 
+
+export function listEarnedMembershipReports(id: string, params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
 }) {
     return makeRequest<Report[]>(
-      "GET", 
+      "GET",
       "/earned_memberships/{id}/reports".replace("{id}", id),
     params,
     "reports"
     );
   }
-  
-export function createEarnedMembershipReport(id: string, createEarnedMembershipReportDetails: {
-    earnedMembershipId: string,
-    reportRequirements: {
-    requirementId: string,
-    reportedCount: number,
-    memberIds: string[]
-  }[]
-  },
+
+export function createEarnedMembershipReport(id: string, createEarnedMembershipReportDetails: NewReport,
 ) {
     return makeRequest<Report>(
-      "POST", 
+      "POST",
       "/earned_memberships/{id}/reports".replace("{id}", id),
     { report: createEarnedMembershipReportDetails },
     "report"
     );
   }
-  
+
 export function getEarnedMembership(id: string) {
     return makeRequest<EarnedMembership>(
-      "GET", 
+      "GET",
       "/earned_memberships/{id}".replace("{id}", id),
     undefined,
 "earnedMembership"
     );
   }
-  
-export function listInvoiceOptions(params?: { 
+
+export function listInvoiceOptions(params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -797,62 +867,63 @@ export function listInvoiceOptions(params?: {
     types?: string[],
 }) {
     return makeRequest<InvoiceOption[]>(
-      "GET", 
+      "GET",
       "/invoice_options",
     params,
     "invoiceOptions"
     );
   }
-  
-export function listInvoices(params?: { 
+
+export function listInvoices(params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
 }) {
     return makeRequest<Invoice[]>(
-      "GET", 
+      "GET",
       "/invoices",
     params,
     "invoices"
     );
   }
-  
+
 export function createInvoice(createInvoiceDetails: {
     id: string,
-    discountId: string
+    discountId?: string
   },
 ) {
     return makeRequest<Invoice>(
-      "POST", 
+      "POST",
       "/invoices",
     { invoiceOption: createInvoiceDetails },
     "invoice"
     );
   }
-  
+
 export function listMembersPermissions(id: string) {
     return makeRequest<{ [key: string]: string }>(
-      "GET", 
+      "GET",
       "/members/{id}/permissions".replace("{id}", id),
     undefined,
 "permissions"
     );
   }
-  
-export function listMembers(params?: { 
+
+export function listMembers(params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
     currentMembers?: boolean,
+    search?: string,
 }) {
     return makeRequest<Member[]>(
-      "GET", 
+      "GET",
       "/members",
     params,
     "members"
     );
   }
-  
+
 export function registerMember(registerMemberDetails: {
     email: string,
     password: string,
@@ -861,22 +932,22 @@ export function registerMember(registerMemberDetails: {
   },
 ) {
     return makeRequest<Member>(
-      "POST", 
+      "POST",
       "/members",
     { member: registerMemberDetails },
     "member"
     );
   }
-  
+
 export function getMember(id: string) {
     return makeRequest<Member>(
-      "GET", 
+      "GET",
       "/members/{id}".replace("{id}", id),
     undefined,
 "member"
     );
   }
-  
+
 export function updateMember(id: string, updateMemberDetails: {
     firstname: string,
     lastname: string,
@@ -885,75 +956,83 @@ export function updateMember(id: string, updateMemberDetails: {
   },
 ) {
     return makeRequest<Member>(
-      "PUT", 
+      "PUT",
       "/members/{id}".replace("{id}", id),
     { member: updateMemberDetails },
     "member"
     );
   }
-  
+
 export function signIn(signInDetails?: {
     email: string,
     password: string
   },
 ) {
     return makeRequest<Member>(
-      "POST", 
+      "POST",
       "/members/sign_in",
     { member: signInDetails },
     "member"
     );
   }
-  
+
 export function signOut() {
     return makeRequest<void>(
-      "DELETE", 
+      "DELETE",
       "/members/sign_out"
     );
   }
-  
+
 export function requestPasswordReset(passwordResetDetails: {
     email: string
   },
 ) {
     return makeRequest<void>(
-      "POST", 
+      "POST",
       "/members/password",
     { member: passwordResetDetails }
     );
   }
-  
+
 export function resetPassword(passwordResetDetails: {
     resetPasswordToken: string,
     password: string
   },
 ) {
     return makeRequest<void>(
-      "PUT", 
+      "PUT",
       "/members/password",
     { member: passwordResetDetails }
     );
   }
-  
-export function listRentals(params?: { 
+
+export function sendRegistrationEmail(registrationEmailDetails: string,
+) {
+    return makeRequest<void>(
+      "POST",
+      "/send_registration",
+    { email: registrationEmailDetails }
+    );
+  }
+
+export function listRentals(params?: {
     pageNum?: number,
     orderBy?: string,
     order?: string,
 }) {
     return makeRequest<Rental[]>(
-      "GET", 
+      "GET",
       "/rentals",
     params,
     "rentals"
     );
   }
-  
+
 export function getRental(id: string) {
     return makeRequest<Rental>(
-      "GET", 
+      "GET",
       "/rentals/{id}".replace("{id}", id),
     undefined,
 "rental"
     );
   }
-  
