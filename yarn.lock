@@ -79,10 +79,10 @@ locate-path@^3.0.0:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
 
-makerspace-ts-api-client-generator@^0.1.11:
-  version "0.1.11"
-  resolved "https://registry.npmjs.org/makerspace-ts-api-client-generator/-/makerspace-ts-api-client-generator-0.1.11.tgz#d00305b57f6838094af731e7a23cf896ab1f4b9b"
-  integrity sha512-dQS6GcCWhq2phr066afwvMcq0jbsCGfB/WK14K4uwnqh+HJPsiOHTnQeE4ka9DChvAoR5N4f9vJg+UNBgAqIKw==
+makerspace-ts-api-client-generator@^0.1.12:
+  version "0.1.12"
+  resolved "https://registry.npmjs.org/makerspace-ts-api-client-generator/-/makerspace-ts-api-client-generator-0.1.12.tgz#8e353ee91d54cedccb460c7522d2cbdb9417d4af"
+  integrity sha512-8iFRsOx6jC4UTjHvx2SNzVG0M+hE7puVBdMnJwj5CdAQrNNOZVCj8W0lctKpT+py3q2lSz7+7IzaXsvNDNHWlQ==
   dependencies:
     yargs "^13.2.4"
 
