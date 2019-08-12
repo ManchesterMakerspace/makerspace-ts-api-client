@@ -24,14 +24,14 @@ let baseApiPath: string = "";
 export const setBaseApiPath = (path: string) => baseApiPath = path;
 
 const buildUrl = (path: string): string => `${baseUrl}${baseApiPath}${path}`;
-const parseQueryParams = (params: { [key: string]: any }) =>
+const parseQueryParams = (params: { [key: string]: any }) => 
   Object.keys(params)
     .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
     .join('&');
 
 export const makeRequest = <T>(
-  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
-  path: string,
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", 
+  path: string, 
   params?: { [key: string]: any },
   responseRoot?: string,
 ): Promise<ApiDataResponse<T> | ApiErrorResponse> => {
@@ -128,6 +128,7 @@ export interface CreditCard {
   expirationYear: number;
   expirationDate: string;
   last4: number;
+  debit: boolean;
 }
 
 export interface Discount {
@@ -196,6 +197,11 @@ export interface Invoice {
   discountId?: string;
   memberName: string;
   memberId: string;
+  refunded: boolean;
+  refundRequested?: string;
+  operation: string;
+  member?: Member;
+  rental?: Rental;
 }
 
 export interface NewInvoiceOption {
@@ -219,6 +225,7 @@ export interface InvoiceOption {
   quantity: number;
   discountId?: string;
   disabled: boolean;
+  operation: string;
 }
 
 export enum NewMemberStatus {
@@ -265,6 +272,7 @@ export interface Member {
   memberContractOnFile: boolean;
   cardId?: string;
   subscriptionId?: string;
+  subscription: boolean;
   customerId?: string;
   earnedMembershipId?: string;
 }
@@ -343,7 +351,7 @@ export interface Report {
   id: string;
   date: string;
   earnedMembershipId: string;
-  reportRequirements: EarnedMembership[];
+  reportRequirements: ReportRequirement[];
 }
 
 export interface NewRental {
@@ -409,9 +417,12 @@ export interface Transaction {
   amount: string;
   memberId: string;
   memberName: string;
+  invoice?: Invoice;
+  creditCardDetails?: CreditCard;
+  paypalDetails?: PayPalAccount;
 }
 
-export function adminListBillingPlans(params?: {
+export function adminListBillingPlans(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -424,8 +435,8 @@ export function adminListBillingPlans(params?: {
     "plans"
     );
   }
-
-export function adminListBillingPlanDiscounts(params?: {
+  
+export function adminListBillingPlanDiscounts(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -439,7 +450,7 @@ export function adminListBillingPlanDiscounts(params?: {
     "discounts"
     );
   }
-
+  
 export function adminListSubscriptions() {
     return makeRequest<Subscription[]>(
       "GET",
@@ -448,15 +459,15 @@ export function adminListSubscriptions() {
 "subscriptions"
     );
   }
-
+  
 export function adminCancelSubscription(id: string) {
     return makeRequest<void>(
       "DELETE",
       "/admin/billing/subscriptions/{id}".replace("{id}", id)
     );
   }
-
-export function adminListTransaction(params?: {
+  
+export function adminListTransaction(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -472,7 +483,7 @@ export function adminListTransaction(params?: {
     "transactions"
     );
   }
-
+  
 export function adminGetTransaction(id: string) {
     return makeRequest<Transaction>(
       "GET",
@@ -481,14 +492,14 @@ export function adminGetTransaction(id: string) {
 "transaction"
     );
   }
-
+  
 export function adminDeleteTransaction(id: string) {
     return makeRequest<void>(
       "DELETE",
       "/admin/billing/transactions/{id}".replace("{id}", id)
     );
   }
-
+  
 export function adminGetNewCard() {
     return makeRequest<{
     uid: string
@@ -499,8 +510,8 @@ export function adminGetNewCard() {
 "card"
     );
   }
-
-export function adminListCards(params: {
+  
+export function adminListCards(params: { 
     memberId: string,
 }) {
     return makeRequest<Card[]>(
@@ -510,7 +521,7 @@ export function adminListCards(params: {
     "cards"
     );
   }
-
+  
 export function adminCreateCard(createAccessCardDetails: {
     memberId: string,
     uid: string,
@@ -524,7 +535,7 @@ export function adminCreateCard(createAccessCardDetails: {
     "card"
     );
   }
-
+  
 export function adminUpdateCard(id: string, updateAccessCardDetails: {
     memberId: string,
     uid: string,
@@ -538,8 +549,8 @@ export function adminUpdateCard(id: string, updateAccessCardDetails: {
     "card"
     );
   }
-
-export function adminListEarnedMembershipReports(id: string, params?: {
+  
+export function adminListEarnedMembershipReports(id: string, params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -551,8 +562,8 @@ export function adminListEarnedMembershipReports(id: string, params?: {
     "reports"
     );
   }
-
-export function adminListEarnedMemberships(params?: {
+  
+export function adminListEarnedMemberships(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -564,7 +575,7 @@ export function adminListEarnedMemberships(params?: {
     "earnedMemberships"
     );
   }
-
+  
 export function adminCreateEarnedMembership(createEarnedMembershipDetails: NewEarnedMembership,
 ) {
     return makeRequest<EarnedMembership>(
@@ -574,7 +585,7 @@ export function adminCreateEarnedMembership(createEarnedMembershipDetails: NewEa
     "earnedMembership"
     );
   }
-
+  
 export function adminGetEarnedMembership(id: string) {
     return makeRequest<EarnedMembership>(
       "GET",
@@ -583,7 +594,7 @@ export function adminGetEarnedMembership(id: string) {
 "earnedMembership"
     );
   }
-
+  
 export function adminUpdateEarnedMembership(id: string, updateEarnedMembershipDetails: EarnedMembership,
 ) {
     return makeRequest<EarnedMembership>(
@@ -593,7 +604,7 @@ export function adminUpdateEarnedMembership(id: string, updateEarnedMembershipDe
     "earnedMembership"
     );
   }
-
+  
 export function adminCreateInvoiceOption(createInvoiceOptionDetails: NewInvoiceOption,
 ) {
     return makeRequest<InvoiceOption>(
@@ -603,7 +614,7 @@ export function adminCreateInvoiceOption(createInvoiceOptionDetails: NewInvoiceO
     "invoiceOption"
     );
   }
-
+  
 export function adminUpdateInvoiceOption(id: string, updateInvoiceOptionDetails: InvoiceOption,
 ) {
     return makeRequest<InvoiceOption>(
@@ -613,15 +624,15 @@ export function adminUpdateInvoiceOption(id: string, updateInvoiceOptionDetails:
     "invoiceOption"
     );
   }
-
+  
 export function adminDeleteInvoiceOption(id: string) {
     return makeRequest<void>(
       "DELETE",
       "/admin/invoice_options/{id}".replace("{id}", id)
     );
   }
-
-export function adminListInvoices(params?: {
+  
+export function adminListInvoices(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -634,7 +645,7 @@ export function adminListInvoices(params?: {
     "invoices"
     );
   }
-
+  
 export function adminCreateInvoices(createInvoiceDetails: {
     id: string,
     discountId?: string,
@@ -649,7 +660,7 @@ export function adminCreateInvoices(createInvoiceDetails: {
     "invoice"
     );
   }
-
+  
 export function adminUpdateInvoice(id: string, updateInvoiceDetails: Invoice,
 ) {
     return makeRequest<Invoice>(
@@ -659,14 +670,14 @@ export function adminUpdateInvoice(id: string, updateInvoiceDetails: Invoice,
     "invoice"
     );
   }
-
+  
 export function adminDeleteInvoice(id: string) {
     return makeRequest<void>(
       "DELETE",
       "/admin/invoices/{id}".replace("{id}", id)
     );
   }
-
+  
 export function adminCreateMember(createMemberDetails: NewMember,
 ) {
     return makeRequest<Member>(
@@ -676,7 +687,7 @@ export function adminCreateMember(createMemberDetails: NewMember,
     "member"
     );
   }
-
+  
 export function adminUpdateMember(id: string, updateMemberDetails: Member,
 ) {
     return makeRequest<Member>(
@@ -686,8 +697,8 @@ export function adminUpdateMember(id: string, updateMemberDetails: Member,
     "member"
     );
   }
-
-export function adminListRentals(params?: {
+  
+export function adminListRentals(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -700,7 +711,7 @@ export function adminListRentals(params?: {
     "rentals"
     );
   }
-
+  
 export function adminCreateRental(createRentalDetails: NewRental,
 ) {
     return makeRequest<Rental>(
@@ -710,7 +721,7 @@ export function adminCreateRental(createRentalDetails: NewRental,
     "rental"
     );
   }
-
+  
 export function adminUpdateRental(id: string, updateRentalDetails: Rental,
 ) {
     return makeRequest<Rental>(
@@ -720,14 +731,14 @@ export function adminUpdateRental(id: string, updateRentalDetails: Rental,
     "rental"
     );
   }
-
+  
 export function adminDeleteRental(id: string) {
     return makeRequest<void>(
       "DELETE",
       "/admin/rentals/{id}".replace("{id}", id)
     );
   }
-
+  
 export function getNewPaymentMethod() {
     return makeRequest<string>(
       "GET",
@@ -736,7 +747,7 @@ export function getNewPaymentMethod() {
 "clientToken"
     );
   }
-
+  
 export function listPaymentMethods() {
     return makeRequest<CreditCard[]>(
       "GET",
@@ -745,7 +756,7 @@ export function listPaymentMethods() {
 "paymentMethods"
     );
   }
-
+  
 export function createPaymentMethod(createPaymentMethodDetails: {
     payment_method_nonce: string,
     make_default: boolean
@@ -758,14 +769,14 @@ export function createPaymentMethod(createPaymentMethodDetails: {
     "paymentMethod"
     );
   }
-
+  
 export function deletePaymentMethod(id: string) {
     return makeRequest<void>(
       "DELETE",
       "/billing/payment_methods/{id}".replace("{id}", id)
     );
   }
-
+  
 export function getSubscription(id: string) {
     return makeRequest<Subscription>(
       "GET",
@@ -774,7 +785,7 @@ export function getSubscription(id: string) {
 "subscription"
     );
   }
-
+  
 export function updateSubscription(id: string, updateSubscriptionDetails: {
     paymentMethodToken: string
   },
@@ -786,15 +797,15 @@ export function updateSubscription(id: string, updateSubscriptionDetails: {
     "subscription"
     );
   }
-
+  
 export function cancelSubscription(id: string) {
     return makeRequest<void>(
       "DELETE",
       "/billing/subscriptions/{id}".replace("{id}", id)
     );
   }
-
-export function listTransactions(params?: {
+  
+export function listTransactions(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -806,7 +817,7 @@ export function listTransactions(params?: {
     "transactions"
     );
   }
-
+  
 export function createTransaction(createTransactionDetails: {
     invoiceId: string,
     paymentMethodId: string
@@ -819,15 +830,15 @@ export function createTransaction(createTransactionDetails: {
     "transaction"
     );
   }
-
+  
 export function deleteTransaction(id: string) {
     return makeRequest<void>(
       "DELETE",
       "/billing/transactions/{id}".replace("{id}", id)
     );
   }
-
-export function listEarnedMembershipReports(id: string, params?: {
+  
+export function listEarnedMembershipReports(id: string, params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -839,7 +850,7 @@ export function listEarnedMembershipReports(id: string, params?: {
     "reports"
     );
   }
-
+  
 export function createEarnedMembershipReport(id: string, createEarnedMembershipReportDetails: NewReport,
 ) {
     return makeRequest<Report>(
@@ -849,7 +860,7 @@ export function createEarnedMembershipReport(id: string, createEarnedMembershipR
     "report"
     );
   }
-
+  
 export function getEarnedMembership(id: string) {
     return makeRequest<EarnedMembership>(
       "GET",
@@ -858,8 +869,8 @@ export function getEarnedMembership(id: string) {
 "earnedMembership"
     );
   }
-
-export function listInvoiceOptions(params?: {
+  
+export function listInvoiceOptions(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -873,8 +884,8 @@ export function listInvoiceOptions(params?: {
     "invoiceOptions"
     );
   }
-
-export function listInvoices(params?: {
+  
+export function listInvoices(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -886,7 +897,7 @@ export function listInvoices(params?: {
     "invoices"
     );
   }
-
+  
 export function createInvoice(createInvoiceDetails: {
     id: string,
     discountId?: string
@@ -899,7 +910,7 @@ export function createInvoice(createInvoiceDetails: {
     "invoice"
     );
   }
-
+  
 export function listMembersPermissions(id: string) {
     return makeRequest<{ [key: string]: string }>(
       "GET",
@@ -908,8 +919,8 @@ export function listMembersPermissions(id: string) {
 "permissions"
     );
   }
-
-export function listMembers(params?: {
+  
+export function listMembers(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -923,7 +934,7 @@ export function listMembers(params?: {
     "members"
     );
   }
-
+  
 export function registerMember(registerMemberDetails: {
     email: string,
     password: string,
@@ -938,7 +949,7 @@ export function registerMember(registerMemberDetails: {
     "member"
     );
   }
-
+  
 export function getMember(id: string) {
     return makeRequest<Member>(
       "GET",
@@ -947,7 +958,7 @@ export function getMember(id: string) {
 "member"
     );
   }
-
+  
 export function updateMember(id: string, updateMemberDetails: {
     firstname: string,
     lastname: string,
@@ -962,7 +973,7 @@ export function updateMember(id: string, updateMemberDetails: {
     "member"
     );
   }
-
+  
 export function signIn(signInDetails?: {
     email: string,
     password: string
@@ -975,14 +986,14 @@ export function signIn(signInDetails?: {
     "member"
     );
   }
-
+  
 export function signOut() {
     return makeRequest<void>(
       "DELETE",
       "/members/sign_out"
     );
   }
-
+  
 export function requestPasswordReset(passwordResetDetails: {
     email: string
   },
@@ -993,7 +1004,7 @@ export function requestPasswordReset(passwordResetDetails: {
     { member: passwordResetDetails }
     );
   }
-
+  
 export function resetPassword(passwordResetDetails: {
     resetPasswordToken: string,
     password: string
@@ -1005,7 +1016,7 @@ export function resetPassword(passwordResetDetails: {
     { member: passwordResetDetails }
     );
   }
-
+  
 export function sendRegistrationEmail(registrationEmailDetails: string,
 ) {
     return makeRequest<void>(
@@ -1014,8 +1025,8 @@ export function sendRegistrationEmail(registrationEmailDetails: string,
     { email: registrationEmailDetails }
     );
   }
-
-export function listRentals(params?: {
+  
+export function listRentals(params?: { 
     pageNum?: number,
     orderBy?: string,
     order?: string,
@@ -1027,7 +1038,7 @@ export function listRentals(params?: {
     "rentals"
     );
   }
-
+  
 export function getRental(id: string) {
     return makeRequest<Rental>(
       "GET",
@@ -1036,3 +1047,4 @@ export function getRental(id: string) {
 "rental"
     );
   }
+  
