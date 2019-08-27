@@ -840,7 +840,7 @@ export function createTransaction(createTransactionDetails: {
     return makeRequest<Transaction>(
       "POST",
       "/billing/transactions",
-    { invoiceId: createTransactionDetails },
+    { transaction: createTransactionDetails },
     "transaction"
     );
   }
