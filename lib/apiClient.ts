@@ -204,6 +204,7 @@ export interface Invoice {
   dueDate: string;
   amount: string;
   subscriptionId?: string;
+  transactionId?: string;
   planId?: string;
   resourceClass: string;
   resourceId: string;
@@ -788,6 +789,13 @@ export function deletePaymentMethod(id: string) {
     return makeRequest<void>(
       "DELETE",
       "/billing/payment_methods/{id}".replace("{id}", id)
+    );
+  }
+  
+export function getReceipt(id: string) {
+    return makeRequest<void>(
+      "GET",
+      "/billing/receipts/{id}".replace("{id}", id)
     );
   }
   
