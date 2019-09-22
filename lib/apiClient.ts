@@ -539,8 +539,7 @@ export function adminListCards(params: {
   
 export function adminCreateCard(createAccessCardDetails: {
     memberId: string,
-    uid: string,
-    cardLocation: string
+    uid: string
   },
 ) {
     return makeRequest<Card>(
@@ -703,7 +702,15 @@ export function adminCreateMember(createMemberDetails: NewMember,
     );
   }
   
-export function adminUpdateMember(id: string, updateMemberDetails: Member,
+export function adminUpdateMember(id: string, updateMemberDetails: {
+    firstname?: string,
+    lastname?: string,
+    email?: string,
+    status?: string,
+    role?: string,
+    renew?: number,
+    memberContractOnFile?: boolean
+  },
 ) {
     return makeRequest<Member>(
       "PUT",
@@ -841,7 +848,9 @@ export function listTransactions(params?: {
   }
   
 export function createTransaction(createTransactionDetails: {
-    invoiceId: string,
+    invoiceId?: string,
+    invoiceOptionId?: string,
+    discountId?: string,
     paymentMethodId: string
   },
 ) {
@@ -982,10 +991,10 @@ export function getMember(id: string) {
   }
   
 export function updateMember(id: string, updateMemberDetails: {
-    firstname: string,
-    lastname: string,
-    email: string,
-    signature: string
+    firstname?: string,
+    lastname?: string,
+    email?: string,
+    signature?: string
   },
 ) {
     return makeRequest<Member>(
