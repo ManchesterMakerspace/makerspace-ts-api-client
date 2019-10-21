@@ -7,8 +7,8 @@
   "license": "MIT",
   "scripts": {
     "generate": "$(npm bin)/makerspace-ts-api-client-generator generate -o ./lib",
-    "build": "tsc",
-    "prepublish": "tsc"
+    "build": "$(npm bin)/tsc",
+    "prepublish": "$(npm bin)/tsc"
   },
   "devDependencies": {
     "@types/node": "^12.6.2",
