@@ -374,6 +374,7 @@ export interface NewRental {
   description: string;
   memberId: string;
   expiration: number;
+  contractOnFile: boolean;
 }
 
 export interface Rental {
@@ -383,6 +384,8 @@ export interface Rental {
   memberName: string;
   memberId: string;
   expiration: number;
+  subscriptionId?: string;
+  contractOnFile: boolean;
 }
 
 export interface Subscription {
@@ -466,12 +469,14 @@ export function adminListBillingPlanDiscounts(params?: {
     );
   }
   
-export function adminListSubscriptions() {
+export function adminListSubscriptions(params?: { 
+    hideCanceled?: boolean,
+}) {
     return makeRequest<Subscription[]>(
       "GET",
       "/admin/billing/subscriptions",
-    undefined,
-"subscriptions"
+    params,
+    "subscriptions"
     );
   }
   
@@ -651,6 +656,8 @@ export function adminListInvoices(params?: {
     orderBy?: string,
     order?: string,
     resourceId?: string,
+    hideSettled?: boolean,
+    types?: string[],
 }) {
     return makeRequest<Invoice[]>(
       "GET",
@@ -792,6 +799,15 @@ export function createPaymentMethod(createPaymentMethodDetails: {
     );
   }
   
+export function getPaymentMethod(id: string) {
+    return makeRequest<CreditCard>(
+      "GET",
+      "/billing/payment_methods/{id}".replace("{id}", id),
+    undefined,
+"paymentMethod"
+    );
+  }
+  
 export function deletePaymentMethod(id: string) {
     return makeRequest<void>(
       "DELETE",
@@ -866,6 +882,13 @@ export function deleteTransaction(id: string) {
     return makeRequest<void>(
       "DELETE",
       "/billing/transactions/{id}".replace("{id}", id)
+    );
+  }
+  
+export function getDocument(id: string) {
+    return makeRequest<void>(
+      "GET",
+      "/documents/{id}".replace("{id}", id)
     );
   }
   
