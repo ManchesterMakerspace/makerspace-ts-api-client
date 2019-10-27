@@ -1102,3 +1102,15 @@ export function getRental(id: string) {
     );
   }
   
+export function updateRental(id: string, updateRentalDetails: {
+    signature?: string
+  },
+) {
+    return makeRequest<Rental>(
+      "PUT",
+      "/rentals/{id}".replace("{id}", id),
+    { rental: updateRentalDetails },
+    "rental"
+    );
+  }
+  
