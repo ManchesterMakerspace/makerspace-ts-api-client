@@ -302,9 +302,15 @@ export interface PayPalAccount {
   email: string;
 }
 
+export enum PlanType {
+  Membership = "membership",
+  Rental = "rental"
+}
+
 export interface Plan {
   id: string;
   name: string;
+  type: string;
   description: string;
   amount: string;
   billingFrequency: number;
@@ -386,6 +392,14 @@ export interface Rental {
   expiration: number;
   subscriptionId?: string;
   contractOnFile: boolean;
+}
+
+export enum SubscriptionStatus {
+  Active = "Active",
+  Canceled = "Canceled",
+  PastDue = "PastDue",
+  Pending = "Pending",
+  Expired = "Expired"
 }
 
 export interface Subscription {
@@ -475,6 +489,7 @@ export function adminListSubscriptions(params?: {
   search?: string,
   planId?: string[],
   subscriptionStatus?: string[],
+  customerId?: string,
 }) {
   return makeRequest<Subscription[]>(
     "GET",
@@ -500,6 +515,7 @@ export function adminListTransaction(params?: {
   refund?: boolean,
   type?: string,
   transactionStatus?: string[],
+  customerId?: string,
 }) {
   return makeRequest<Transaction[]>(
     "GET",
@@ -681,9 +697,9 @@ export function adminListInvoices(params?: {
   order?: string,
   search?: string,
   settled?: boolean,
-  past_due?: boolean,
+  pastDue?: boolean,
   refunded?: boolean,
-  refund_requested?: boolean,
+  refundRequested?: boolean,
   planId?: string[],
   resourceId?: string[],
   memberId?: string[],
@@ -1017,6 +1033,13 @@ export function listInvoices(params?: {
   pageNum?: number,
   orderBy?: string,
   order?: string,
+  settled?: boolean,
+  pastDue?: boolean,
+  refunded?: boolean,
+  refundRequested?: boolean,
+  planId?: string[],
+  resourceId?: string[],
+  resourceClass?: string[],
 }) {
   return makeRequest<Invoice[]>(
     "GET",
