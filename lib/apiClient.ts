@@ -420,12 +420,18 @@ export interface Subscription {
 }
 
 export enum TransactionStatus {
-  Failed = "failed",
-  Gateway_rejected = "gateway_rejected",
-  Processor_declined = "processor_declined",
-  Settled = "settled",
-  Unrecognized = "unrecognized",
-  Voided = "voided"
+  Authorizing = "Authorizing",
+  Authorized = "Authorized",
+  AuthorizationExpired = "AuthorizationExpired",
+  SubmittedForSettlement = "SubmittedForSettlement",
+  Settling = "Settling",
+  SettlementPending = "SettlementPending",
+  SettlementDeclined = "SettlementDeclined",
+  Settled = "Settled",
+  Voided = "Voided",
+  ProcessorDeclined = "ProcessorDeclined",
+  GatewayRejected = "GatewayRejected",
+  Failed = "Failed"
 }
 
 export interface Transaction {
