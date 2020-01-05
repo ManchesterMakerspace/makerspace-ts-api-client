@@ -397,7 +397,7 @@ export interface Rental {
 export enum SubscriptionStatus {
   Active = "Active",
   Canceled = "Canceled",
-  PastDue = "PastDue",
+  Past Due = "Past Due",
   Pending = "Pending",
   Expired = "Expired"
 }
@@ -420,18 +420,18 @@ export interface Subscription {
 }
 
 export enum TransactionStatus {
-  Authorizing = "Authorizing",
-  Authorized = "Authorized",
-  AuthorizationExpired = "AuthorizationExpired",
-  SubmittedForSettlement = "SubmittedForSettlement",
-  Settling = "Settling",
-  SettlementPending = "SettlementPending",
-  SettlementDeclined = "SettlementDeclined",
-  Settled = "Settled",
-  Voided = "Voided",
-  ProcessorDeclined = "ProcessorDeclined",
-  GatewayRejected = "GatewayRejected",
-  Failed = "Failed"
+  Authorization_expired = "authorization_expired",
+  Authorized = "authorized",
+  Authorizing = "authorizing",
+  Settlement_pending = "settlement_pending",
+  Settlement_declined = "settlement_declined",
+  Failed = "failed",
+  Gateway_rejected = "gateway_rejected",
+  Processor_declined = "processor_declined",
+  Settled = "settled",
+  Settling = "settling",
+  Submmitted_for_settlement = "submmitted_for_settlement",
+  Voided = "voided"
 }
 
 export interface Transaction {
