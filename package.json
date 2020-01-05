@@ -8,11 +8,11 @@
   "scripts": {
     "generate": "$(npm bin)/makerspace-ts-api-client-generator generate -o ./lib",
     "build": "$(npm bin)/tsc",
-    "prepublish": "$(npm bin)/tsc"
+    "prepublish": "yarn build"
   },
   "devDependencies": {
     "@types/node": "^12.6.2",
-    "makerspace-ts-api-client-generator": "^1.0.0",
+    "makerspace-ts-api-client-generator": "^1.0.1",
     "typescript": "^3.5.2"
   }
 }
