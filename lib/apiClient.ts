@@ -290,6 +290,7 @@ export interface Member {
   subscription: boolean;
   customerId?: string;
   earnedMembershipId?: string;
+  notes?: string;
 }
 
 export interface PayPalAccount {
@@ -392,6 +393,7 @@ export interface Rental {
   expiration: number;
   subscriptionId?: string;
   contractOnFile: boolean;
+  notes?: string;
 }
 
 export enum SubscriptionStatus {
