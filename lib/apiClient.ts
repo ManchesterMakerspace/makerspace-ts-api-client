@@ -462,6 +462,23 @@ export interface Transaction {
   paypalDetails?: PayPalAccount;
 }
 
+export function listAnalytics(params?: { 
+}) {
+  return makeRequest<{
+    totalMembers: number,
+    activeMembers: number,
+    newMemebrs: number,
+    subscribedMembers: number,
+    pastDueInvoices: number,
+    refundsPending: number
+  }>(
+    "GET",
+    "/admin/analytics",
+    undefined,
+"analytics"
+    );
+  }
+  
 export function adminListBillingPlans(params?: { 
   pageNum?: number,
   orderBy?: string,
