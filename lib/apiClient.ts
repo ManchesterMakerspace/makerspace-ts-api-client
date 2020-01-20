@@ -462,12 +462,11 @@ export interface Transaction {
   paypalDetails?: PayPalAccount;
 }
 
-export function listAnalytics(params?: { 
+export function adminListAnalytics(params?: { 
 }) {
   return makeRequest<{
     totalMembers: number,
-    activeMembers: number,
-    newMemebrs: number,
+    newMembers: number,
     subscribedMembers: number,
     pastDueInvoices: number,
     refundsPending: number
@@ -505,6 +504,15 @@ export function adminListBillingPlanDiscounts(params?: {
     "/admin/billing/plans/discounts",
     params,
     "discounts"
+    );
+  }
+  
+export function adminGetReceipt(params: { 
+  id: string,
+}) {
+  return makeRequest<void>(
+    "GET",
+    "/admin/billing/receipts/{id}".replace("{id}", params.id)
     );
   }
   
