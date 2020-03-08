@@ -999,6 +999,18 @@ export function deleteTransaction(params: {
     );
   }
   
+export function message(params?: { 
+  messageDetails?: {
+    message: string
+  },
+}) {
+  return makeRequest<void>(
+    "POST",
+    "/client_error_handler",
+    { notification: params.messageDetails }
+    );
+  }
+  
 export function getDocument(params: { 
   id: string,
   resourceId?: string,
