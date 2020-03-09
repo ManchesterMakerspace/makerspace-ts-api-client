@@ -544,7 +544,6 @@ export function adminCancelSubscription(params: {
 export function adminListTransaction(params?: { 
   startDate?: string,
   endDate?: string,
-  search?: string,
   refund?: boolean,
   type?: string,
   transactionStatus?: string[],
