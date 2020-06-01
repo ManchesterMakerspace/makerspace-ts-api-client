@@ -228,6 +228,7 @@ export interface NewInvoiceOption {
   quantity: number;
   discountId?: string;
   disabled: boolean;
+  isPromotion: boolean;
 }
 
 export interface InvoiceOption {
@@ -241,6 +242,7 @@ export interface InvoiceOption {
   discountId?: string;
   disabled: boolean;
   operation: string;
+  isPromotion: boolean;
 }
 
 export enum NewMemberStatus {
@@ -1070,6 +1072,17 @@ export function listInvoiceOptions(params?: {
     "/invoice_options",
     params,
     "invoiceOptions"
+    );
+  }
+  
+export function getInvoiceOption(params: { 
+  id: string,
+}) {
+  return makeRequest<InvoiceOption>(
+    "GET",
+    "/invoice_options/{id}".replace("{id}", params.id),
+    undefined,
+"invoiceOption"
     );
   }
   
