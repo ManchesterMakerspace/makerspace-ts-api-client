@@ -264,11 +264,14 @@ export interface NewMember {
   status: string;
   role: string;
   memberContractOnFile: boolean;
-  street: string;
-  unit: string;
-  city: string;
-  state: string;
-  postalCode: string;
+  phone: string;
+  address: {
+    street: string,
+    unit?: string,
+    city: string,
+    state: string,
+    postalCode: string
+  };
 }
 
 export enum MemberStatus {
@@ -301,7 +304,7 @@ export interface Member {
   phone: string;
   address: {
     street: string,
-    unit: string,
+    unit?: string,
     city: string,
     state: string,
     postalCode: string
