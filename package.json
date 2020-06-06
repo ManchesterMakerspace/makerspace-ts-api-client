@@ -1,6 +1,6 @@
 {
   "name": "makerspace-ts-api-client",
-  "version": "1.8.4",
+  "version": "1.8.5",
   "main": "dist/apiClient.js",
   "types": "dist/apiClient.d.ts",
   "author": "Will Lynch <will.lynch91@gmail.com>",
