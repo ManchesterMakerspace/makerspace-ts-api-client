@@ -298,11 +298,14 @@ export interface Member {
   customerId?: string;
   earnedMembershipId?: string;
   notes?: string;
-  street: string;
-  unit: string;
-  city: string;
-  state: string;
-  postalCode: string;
+  phone: string;
+  address: {
+    street: string,
+    unit: string,
+    city: string,
+    state: string,
+    postalCode: string
+  };
 }
 
 export interface PayPalAccount {
