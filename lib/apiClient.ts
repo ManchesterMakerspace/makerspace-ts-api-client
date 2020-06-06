@@ -264,6 +264,11 @@ export interface NewMember {
   status: string;
   role: string;
   memberContractOnFile: boolean;
+  street: string;
+  unit: string;
+  city: string;
+  state: string;
+  postalCode: string;
 }
 
 export enum MemberStatus {
@@ -293,6 +298,11 @@ export interface Member {
   customerId?: string;
   earnedMembershipId?: string;
   notes?: string;
+  street: string;
+  unit: string;
+  city: string;
+  state: string;
+  postalCode: string;
 }
 
 export interface PayPalAccount {
