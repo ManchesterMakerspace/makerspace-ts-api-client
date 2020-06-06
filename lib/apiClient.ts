@@ -817,6 +817,13 @@ export function adminUpdateMember(params: {
     firstname?: string,
     lastname?: string,
     email?: string,
+    address?: {
+    street: string,
+    unit?: string,
+    city: string,
+    state: string,
+    postalCode: string
+  },
     status?: string,
     role?: string,
     renew?: number,
@@ -1167,7 +1174,14 @@ export function registerMember(params: {
     email: string,
     password: string,
     firstname: string,
-    lastname: string
+    lastname: string,
+    address: {
+    street: string,
+    unit?: string,
+    city: string,
+    state: string,
+    postalCode: string
+  }
   },
 }) {
   return makeRequest<Member>(
@@ -1195,7 +1209,14 @@ export function updateMember(params: {
     firstname?: string,
     lastname?: string,
     email?: string,
-    signature?: string
+    signature?: string,
+    address?: {
+    street: string,
+    unit?: string,
+    city: string,
+    state: string,
+    postalCode: string
+  }
   },
 }) {
   return makeRequest<Member>(
