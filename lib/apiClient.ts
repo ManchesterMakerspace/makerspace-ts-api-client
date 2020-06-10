@@ -301,13 +301,13 @@ export interface Member {
   customerId?: string;
   earnedMembershipId?: string;
   notes?: string;
-  phone: string;
+  phone?: string;
   address: {
-    street: string,
+    street?: string,
     unit?: string,
-    city: string,
-    state: string,
-    postalCode: string
+    city?: string,
+    state?: string,
+    postalCode?: string
   };
 }
 
@@ -818,16 +818,18 @@ export function adminUpdateMember(params: {
     lastname?: string,
     email?: string,
     address?: {
-    street: string,
+    street?: string,
     unit?: string,
-    city: string,
-    state: string,
-    postalCode: string
+    city?: string,
+    state?: string,
+    postalCode?: string
   },
+    phone?: string,
     status?: string,
     role?: string,
     renew?: number,
-    memberContractOnFile?: boolean
+    memberContractOnFile?: boolean,
+    subscription?: boolean
   },
 }) {
   return makeRequest<Member>(
@@ -1175,12 +1177,13 @@ export function registerMember(params: {
     password: string,
     firstname: string,
     lastname: string,
+    phone?: string,
     address: {
-    street: string,
+    street?: string,
     unit?: string,
-    city: string,
-    state: string,
-    postalCode: string
+    city?: string,
+    state?: string,
+    postalCode?: string
   }
   },
 }) {
@@ -1210,12 +1213,13 @@ export function updateMember(params: {
     lastname?: string,
     email?: string,
     signature?: string,
+    phone?: string,
     address?: {
-    street: string,
+    street?: string,
     unit?: string,
-    city: string,
-    state: string,
-    postalCode: string
+    city?: string,
+    state?: string,
+    postalCode?: string
   }
   },
 }) {
