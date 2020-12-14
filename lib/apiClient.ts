@@ -311,6 +311,30 @@ export interface Member {
   };
 }
 
+export enum MemberSummaryStatus {
+  ActiveMember = "activeMember",
+  Inactive = "inactive",
+  NonMember = "nonMember",
+  Revoked = "revoked"
+}
+
+export enum MemberSummaryRole {
+  Admin = "admin",
+  Member = "member"
+}
+
+export interface MemberSummary {
+  id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  status: string;
+  role: string;
+  expirationTime?: number;
+  memberContractOnFile: boolean;
+  notes?: string;
+}
+
 export interface PayPalAccount {
   id: string;
   default: boolean;
@@ -1163,7 +1187,7 @@ export function listMembers(params?: {
   currentMembers?: boolean,
   search?: string,
 }) {
-  return makeRequest<Member[]>(
+  return makeRequest<MemberSummary[]>(
     "GET",
     "/members",
     params,
