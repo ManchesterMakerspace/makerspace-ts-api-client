@@ -13,7 +13,7 @@
   "devDependencies": {
     "@types/node": "^12.6.2",
     "@types/yargs": "^15.0.12",
-    "makerspace-ts-api-client-generator": "2.0.1",
+    "makerspace-ts-api-client-generator": "2.1.0",
     "ts-node": "^9.1.1",
     "typescript": "^3.5.2"
   }
