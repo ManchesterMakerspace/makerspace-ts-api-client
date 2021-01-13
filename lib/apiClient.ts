@@ -21,7 +21,7 @@ export const isApiErrorResponse = (response: any): response is ApiErrorResponse 
 
 const defaultMessage = "Unknown Error.  Contact an administrator";
 let baseUrl: string = process.env.BASE_URL || "";
-let baseApiPath: string = "";
+let baseApiPath: string = "/api";
 export const setBaseApiPath = (path: string) => baseApiPath = path;
 
 const buildUrl = (path: string): string => `${baseUrl}${baseApiPath}${path}`;
@@ -48,7 +48,6 @@ export const makeRequest = <T>(
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
   path: string,
   params?: { [key: string]: any },
-  responseRoot?: string,
 ): Promise<ApiDataResponse<T>> => {
   let body: string;
   let url: string = buildUrl(path);
@@ -80,9 +79,6 @@ export const makeRequest = <T>(
     } catch { }
 
     if (result.response.status >= 200 && result.response.status < 300) {
-      if (responseRoot) {
-        result.data = result.data[responseRoot];
-      }
       return result;
     } else {
       return {
@@ -126,6 +122,14 @@ function validateRequiredParameters(
 
 /* tslint:disable */
 
+export interface AdminmembersidAddress {
+    "street"?: string;
+    "unit"?: string;
+    "city"?: string;
+    "state"?: string;
+    "postalCode"?: string;
+}
+
 export interface Card {
     "id": string;
     "holder": string;
@@ -145,9 +149,38 @@ export enum CardValidityEnum {
     Stolen = 'stolen'
 }
 
+export interface CreateAccessCardDetails {
+    "memberId": string;
+    "uid": string;
+}
+
+export interface CreateInvoiceDetails {
+    "id": string;
+    "memberId": string;
+    "resourceId": string;
+    "discountId"?: string;
+}
+
+export interface CreateInvoiceDetails1 {
+    "id": string;
+    "discountId"?: string;
+}
+
+export interface CreatePaymentMethodDetails {
+    "paymentMethodNonce": string;
+    "makeDefault"?: boolean;
+}
+
+export interface CreateTransactionDetails {
+    "invoiceId"?: string;
+    "invoiceOptionId"?: string;
+    "discountId"?: string;
+    "paymentMethodId": string;
+}
+
 export interface CreditCard {
     "id": string;
-    "_default": boolean;
+    "isDefault": boolean;
     "paymentType"?: string;
     "customerId": string;
     "imageUrl": string;
@@ -161,14 +194,14 @@ export interface CreditCard {
 }
 
 export interface CreditCardSummary {
-    "imageUrl": string;
-    "cardType": string;
-    "expirationMonth": number;
-    "expirationYear": number;
-    "expirationDate": string;
-    "last4": number;
-    "debit": boolean;
-    "token": string;
+    "imageUrl"?: string;
+    "cardType"?: string;
+    "expirationMonth"?: number;
+    "expirationYear"?: number;
+    "expirationDate"?: string;
+    "last4"?: number;
+    "debit"?: boolean;
+    "token"?: string;
 }
 
 export interface Discount {
@@ -192,17 +225,9 @@ export interface EarnedMembership {
     "id": string;
     "memberId": string;
     "memberName": string;
-    "memberStatus": EarnedMembershipMemberStatusEnum;
+    "memberStatus": MemberStatus;
     "memberExpiration": number;
     "requirements": Array<Requirement>;
-}
-
-
-export enum EarnedMembershipMemberStatusEnum {
-    ActiveMember = 'activeMember',
-    Inactive = 'inactive',
-    NonMember = 'nonMember',
-    Revoked = 'revoked'
 }
 
 export interface Error {
@@ -212,119 +237,15 @@ export interface Error {
 }
 
 export interface InlineResponse200 {
-    "analytics": InlineResponse200Analytics;
-}
-
-export interface InlineResponse2001 {
-    "plans": Array<Plan>;
-}
-
-export interface InlineResponse20010 {
-    "earnedMemberships": Array<EarnedMembership>;
-}
-
-export interface InlineResponse20011 {
-    "earnedMembership": EarnedMembership;
-}
-
-export interface InlineResponse20012 {
-    "invoiceOption": InvoiceOption;
-}
-
-export interface InlineResponse20013 {
-    "invoices": Array<Invoice>;
-}
-
-export interface InlineResponse20014 {
-    "invoice": Invoice;
-}
-
-export interface InlineResponse20015 {
-    "member": Member;
-}
-
-export interface InlineResponse20016 {
-    "rentals": Array<Rental>;
-}
-
-export interface InlineResponse20017 {
-    "rental": Rental;
-}
-
-export interface InlineResponse20018 {
-    "clientToken": string;
-}
-
-export interface InlineResponse20019 {
-    "paymentMethods": Array<CreditCard>;
-}
-
-export interface InlineResponse2002 {
-    "discounts": Array<Discount>;
-}
-
-export interface InlineResponse20020 {
-    "paymentMethod": CreditCard;
-}
-
-export interface InlineResponse20021 {
-    "subscription": Subscription;
-}
-
-export interface InlineResponse20022 {
-    "report": Report;
-}
-
-export interface InlineResponse20023 {
-    "invoiceOptions": Array<InvoiceOption>;
-}
-
-export interface InlineResponse20024 {
-    "permissions": any;
-}
-
-export interface InlineResponse20025 {
-    "members": Array<MemberSummary>;
-}
-
-export interface InlineResponse2003 {
-    "subscriptions": Array<Subscription>;
-}
-
-export interface InlineResponse2004 {
-    "transactions": Array<Transaction>;
-}
-
-export interface InlineResponse2005 {
-    "transaction": Transaction;
-}
-
-export interface InlineResponse2006 {
-    "card": InlineResponse2006Card;
-}
-
-export interface InlineResponse2006Card {
-    "uid"?: string;
-}
-
-export interface InlineResponse2007 {
-    "cards": Array<Card>;
-}
-
-export interface InlineResponse2008 {
-    "card": Card;
-}
-
-export interface InlineResponse2009 {
-    "reports": Array<Report>;
-}
-
-export interface InlineResponse200Analytics {
     "totalMembers"?: number;
     "newMembers"?: number;
     "subscribedMembers"?: number;
     "pastDueInvoices"?: number;
     "refundsPending"?: number;
+}
+
+export interface InlineResponse2001 {
+    "clientToken": string;
 }
 
 export interface Invoice {
@@ -339,7 +260,7 @@ export interface Invoice {
     "subscriptionId"?: string;
     "transactionId"?: string;
     "planId"?: string;
-    "resourceClass": InvoiceResourceClassEnum;
+    "resourceClass": InvoiceableResource;
     "resourceId": string;
     "quantity": number;
     "discountId"?: string;
@@ -350,26 +271,24 @@ export interface Invoice {
     "resource": Member | Rental;
 }
 
-
-export enum InvoiceResourceClassEnum {
-    Member = 'member',
-    Rental = 'rental'
-}
-
 export interface InvoiceOption {
     "id": string;
     "name": string;
     "description": string;
     "amount": string;
     "planId"?: string;
-    "resourceClass": string;
+    "resourceClass": InvoiceableResource;
     "quantity": number;
     "discountId"?: string;
     "disabled": boolean;
     "operation": string;
-    "isPromotion": boolean;
+    "isPromotion"?: boolean;
 }
 
+export enum InvoiceableResource {
+    Member = 'member',
+    Rental = 'rental'
+}
 export interface Member {
     "id": string;
     "firstname": string;
@@ -386,28 +305,18 @@ export interface Member {
     "earnedMembershipId"?: string;
     "notes"?: string;
     "phone"?: string;
-    "address": MemberAddress;
+    "address": AdminmembersidAddress;
 }
 
-export interface MemberAddress {
-    "street"?: string;
-    "unit"?: string;
-    "city"?: string;
-    "state"?: string;
-    "postalCode"?: string;
+export enum MemberRole {
+    Admin = 'admin',
+    Member = 'member'
 }
-
-export type MemberRole = "admin" | "member";
-export enum MemberRoleValues {
-    admin = "admin",
-    member = "member"
-}
-export type MemberStatus = "activeMember" | "inactive" | "nonMember" | "revoked";
-export enum MemberStatusValues {
-    activeMember = "activeMember",
-    inactive = "inactive",
-    nonMember = "nonMember",
-    revoked = "revoked"
+export enum MemberStatus {
+    ActiveMember = 'activeMember',
+    Inactive = 'inactive',
+    NonMember = 'nonMember',
+    Revoked = 'revoked'
 }
 export interface MemberSummary {
     "id": string;
@@ -421,6 +330,24 @@ export interface MemberSummary {
     "notes"?: string;
 }
 
+export interface MemberspasswordMember {
+    "resetPasswordToken"?: string;
+    "password"?: string;
+}
+
+export interface MemberspasswordMember1 {
+    "email"?: string;
+}
+
+export interface MemberssignInMember {
+    "email"?: string;
+    "password"?: string;
+}
+
+export interface MessageDetails {
+    "message": string;
+}
+
 export interface NewEarnedMembership {
     "memberId": string;
     "requirements": Array<NewRequirement>;
@@ -431,7 +358,7 @@ export interface NewInvoiceOption {
     "description": string;
     "amount": string;
     "planId"?: string;
-    "resourceClass": string;
+    "resourceClass": InvoiceableResource;
     "quantity": number;
     "discountId"?: string;
     "disabled": boolean;
@@ -459,7 +386,7 @@ export interface NewMemberAddress {
 
 export interface NewRental {
     "number": string;
-    "description": string;
+    "description"?: string;
     "memberId": string;
     "expiration": number;
     "contractOnFile": boolean;
@@ -492,6 +419,14 @@ export interface PasswordErrorErrors {
     "email"?: Array<string>;
 }
 
+export interface PasswordResetDetails {
+    "member"?: MemberspasswordMember;
+}
+
+export interface PasswordResetDetails1 {
+    "member"?: MemberspasswordMember1;
+}
+
 export interface PayPalAccount {
     "id": string;
     "_default": boolean;
@@ -503,11 +438,11 @@ export interface PayPalAccount {
 }
 
 export interface PayPalAccountSummary {
-    "imageUrl": string;
-    "payerEmail": string;
-    "payerFirstName": string;
-    "payerLastName": string;
-    "token": string;
+    "imageUrl"?: string;
+    "payerEmail"?: string;
+    "payerFirstName"?: string;
+    "payerLastName"?: string;
+    "token"?: string;
 }
 
 export interface Plan {
@@ -531,6 +466,23 @@ export interface PlanDiscounts {
     "name"?: string;
     "description"?: string;
     "amount"?: string;
+}
+
+export interface RegisterMemberDetails {
+    "email": string;
+    "password": string;
+    "firstname": string;
+    "lastname": string;
+    "phone"?: string;
+    "address"?: AdminmembersidAddress;
+}
+
+export interface RegistrationEmailDetails {
+    "email": string;
+}
+
+export interface RejectionCard {
+    "uid": string;
 }
 
 export interface Rental {
@@ -577,6 +529,10 @@ export interface Requirement {
     "termEndDate": string;
     "termId": string;
     "satisfied": boolean;
+}
+
+export interface SignInDetails {
+    "member"?: MemberssignInMember;
 }
 
 export interface Subscription {
@@ -648,67 +604,108 @@ export interface TransactionSubscriptionDetails {
     "billingPeriodEndDate"?: string;
 }
 
+export interface UpdateAccessCardDetails {
+    "cardLocation": string;
+}
 
-export type adminListAnalyticsReturnType = InlineResponse200[keyof InlineResponse200];
+export interface UpdateInvoiceDetails {
+    "settled"?: boolean;
+}
+
+export interface UpdateMemberDetails {
+    "firstname"?: string;
+    "lastname"?: string;
+    "email"?: string;
+    "address"?: AdminmembersidAddress;
+    "phone"?: string;
+    "status"?: UpdateMemberDetailsStatusEnum;
+    "role"?: UpdateMemberDetailsRoleEnum;
+    "renew"?: number;
+    "memberContractOnFile"?: boolean;
+    "subscription"?: boolean;
+}
+
+
+export enum UpdateMemberDetailsStatusEnum {
+    ActiveMember = 'activeMember',
+    Inactive = 'inactive',
+    NonMember = 'nonMember',
+    Revoked = 'revoked'
+}
+
+export enum UpdateMemberDetailsRoleEnum {
+    Admin = 'admin',
+    Member = 'member'
+}
+
+export interface UpdateMemberDetails1 {
+}
+
+export interface UpdateRentalDetails {
+    "signature": string;
+}
+
+export interface UpdateSubscriptionDetails {
+    "paymentMethodToken": string;
+}
+
+
 
 /** 
 * Lists analytic counts
 */
-export function adminListAnalytics(): Promise<{ response: Response, data: adminListAnalyticsReturnType }> {
-
+export function adminListAnalytics(): Promise<{ response: Response, data: InlineResponse200 }> {
     const path = `/admin/analytics`;
 
-    return makeRequest<adminListAnalyticsReturnType>(
+    return makeRequest<InlineResponse200>(
         "GET",
         path,
     );
 }
-export type registerMemberReturnType = InlineResponse20015[keyof InlineResponse20015];
-export type sendRegistrationEmailReturnType = Response;
-export type signInReturnType = InlineResponse20015[keyof InlineResponse20015];
-export type signOutReturnType = Response;
 
 /** 
 * Registers new member
+* @param body 
 */
-export function registerMember(): Promise<{ response: Response, data: registerMemberReturnType }> {
-
+export function registerMember(params: {  "body": RegisterMemberDetails; }): Promise<{ response: Response, data: Member }> {
     const path = `/members`;
 
-    return makeRequest<registerMemberReturnType>(
+    return makeRequest<Member>(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
 * Sends registration email
+* @param body 
 */
-export function sendRegistrationEmail(): Promise<{ response: Response, data: undefined }> {
-
+export function sendRegistrationEmail(params: {  "body": RegistrationEmailDetails; }): Promise<{ response: Response, data: undefined }> {
     const path = `/send_registration`;
 
     return makeRequest(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
 * Signs in user
+* @param body 
 */
-export function signIn(): Promise<{ response: Response, data: signInReturnType }> {
-
+export function signIn(params: {  "body": SignInDetails; }): Promise<{ response: Response, data: Member }> {
     const path = `/members/sign_in`;
 
-    return makeRequest<signInReturnType>(
+    return makeRequest<Member>(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
 * Signs out user
 */
 export function signOut(): Promise<{ response: Response, data: undefined }> {
-
     const path = `/members/sign_out`;
 
     return makeRequest(
@@ -716,31 +713,27 @@ export function signOut(): Promise<{ response: Response, data: undefined }> {
         path,
     );
 }
-export type adminCreateCardReturnType = InlineResponse2008[keyof InlineResponse2008];
-export type adminGetNewCardReturnType = InlineResponse2006[keyof InlineResponse2006];
-export type adminListCardsReturnType = InlineResponse2007[keyof InlineResponse2007];
-export type adminUpdateCardReturnType = InlineResponse2008[keyof InlineResponse2008];
 
 /** 
 * Creates an access card
+* @param body 
 */
-export function adminCreateCard(): Promise<{ response: Response, data: adminCreateCardReturnType }> {
-
+export function adminCreateCard(params: {  "body": CreateAccessCardDetails; }): Promise<{ response: Response, data: Card }> {
     const path = `/admin/cards`;
 
-    return makeRequest<adminCreateCardReturnType>(
+    return makeRequest<Card>(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
 * Initiate new card creation
 */
-export function adminGetNewCard(): Promise<{ response: Response, data: adminGetNewCardReturnType }> {
-
+export function adminGetNewCard(): Promise<{ response: Response, data: RejectionCard }> {
     const path = `/admin/cards/new`;
 
-    return makeRequest<adminGetNewCardReturnType>(
+    return makeRequest<RejectionCard>(
         "GET",
         path,
     );
@@ -749,16 +742,10 @@ export function adminGetNewCard(): Promise<{ response: Response, data: adminGetN
 * Gets a list of members cards
 * @param memberId 
 */
-export function adminListCards(params: {  "memberId": string; }): Promise<{ response: Response, data: adminListCardsReturnType }> {
-    validateRequiredParameters(
-        ["memberId"], 
-        "adminListCards", 
-        params
-    );
-
+export function adminListCards(params: {  "memberId": string; }): Promise<{ response: Response, data: Array<Card> }> {
     const path = `/admin/cards`;
 
-    return makeRequest<adminListCardsReturnType>(
+    return makeRequest<Array<Card>>(
         "GET",
         path,
         {
@@ -768,37 +755,32 @@ export function adminListCards(params: {  "memberId": string; }): Promise<{ resp
 }
 /** 
 * Updates a card
+* @param body 
 * @param id 
 */
-export function adminUpdateCard(params: {  "id": string; }): Promise<{ response: Response, data: adminUpdateCardReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminUpdateCard", 
-        params
-    );
-
+export function adminUpdateCard(params: {  "body": UpdateAccessCardDetails; "id": string; }): Promise<{ response: Response, data: Card }> {
     const path = `/admin/cards/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<adminUpdateCardReturnType>(
+    return makeRequest<Card>(
         "PUT",
         path,
+        params["body"]
     );
 }
-export type messageReturnType = Response;
 
 /** 
 * Sends a slack message
+* @param body 
 */
-export function message(): Promise<{ response: Response, data: undefined }> {
-
+export function message(params: {  "body": MessageDetails; }): Promise<{ response: Response, data: undefined }> {
     const path = `/client_error_handler`;
 
     return makeRequest(
         "POST",
         path,
+        params["body"]
     );
 }
-export type adminListBillingPlanDiscountsReturnType = InlineResponse2002[keyof InlineResponse2002];
 
 /** 
 * Gets a list of billing plan discounts
@@ -808,16 +790,10 @@ export type adminListBillingPlanDiscountsReturnType = InlineResponse2002[keyof I
 * @param subscriptionOnly 
 * @param types 
 */
-export function adminListBillingPlanDiscounts(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "subscriptionOnly"?: boolean; "types"?: Array<string>; }): Promise<{ response: Response, data: adminListBillingPlanDiscountsReturnType }> {
-    validateRequiredParameters(
-        [], 
-        "adminListBillingPlanDiscounts", 
-        params
-    );
-
+export function adminListBillingPlanDiscounts(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "subscriptionOnly"?: boolean; "types"?: Array<string>; }): Promise<{ response: Response, data: Array<Discount> }> {
     const path = `/admin/billing/plans/discounts`;
 
-    return makeRequest<adminListBillingPlanDiscountsReturnType>(
+    return makeRequest<Array<Discount>>(
         "GET",
         path,
         {
@@ -829,7 +805,6 @@ export function adminListBillingPlanDiscounts(params: {  "pageNum"?: number; "or
         },
     );
 }
-export type getDocumentReturnType = Response;
 
 /** 
 * Get a document
@@ -837,12 +812,6 @@ export type getDocumentReturnType = Response;
 * @param resourceId 
 */
 export function getDocument(params: {  "id": string; "resourceId"?: string; }): Promise<{ response: Response, data: undefined }> {
-    validateRequiredParameters(
-        ["id",], 
-        "getDocument", 
-        params
-    );
-
     const path = `/documents/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest(
@@ -853,38 +822,28 @@ export function getDocument(params: {  "id": string; "resourceId"?: string; }): 
         },
     );
 }
-export type adminCreateEarnedMembershipReturnType = InlineResponse20011[keyof InlineResponse20011];
-export type adminGetEarnedMembershipReturnType = InlineResponse20011[keyof InlineResponse20011];
-export type adminListEarnedMembershipsReturnType = InlineResponse20010[keyof InlineResponse20010];
-export type adminUpdateEarnedMembershipReturnType = InlineResponse20011[keyof InlineResponse20011];
-export type getEarnedMembershipReturnType = InlineResponse20011[keyof InlineResponse20011];
 
 /** 
 * Creates an earned membership
+* @param body 
 */
-export function adminCreateEarnedMembership(): Promise<{ response: Response, data: adminCreateEarnedMembershipReturnType }> {
-
+export function adminCreateEarnedMembership(params: {  "body": NewEarnedMembership; }): Promise<{ response: Response, data: EarnedMembership }> {
     const path = `/admin/earned_memberships`;
 
-    return makeRequest<adminCreateEarnedMembershipReturnType>(
+    return makeRequest<EarnedMembership>(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
 * Gets an earned membership
 * @param id 
 */
-export function adminGetEarnedMembership(params: {  "id": string; }): Promise<{ response: Response, data: adminGetEarnedMembershipReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminGetEarnedMembership", 
-        params
-    );
-
+export function adminGetEarnedMembership(params: {  "id": string; }): Promise<{ response: Response, data: EarnedMembership }> {
     const path = `/admin/earned_memberships/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<adminGetEarnedMembershipReturnType>(
+    return makeRequest<EarnedMembership>(
         "GET",
         path,
     );
@@ -895,16 +854,10 @@ export function adminGetEarnedMembership(params: {  "id": string; }): Promise<{ 
 * @param orderBy 
 * @param order 
 */
-export function adminListEarnedMemberships(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; }): Promise<{ response: Response, data: adminListEarnedMembershipsReturnType }> {
-    validateRequiredParameters(
-        [], 
-        "adminListEarnedMemberships", 
-        params
-    );
-
+export function adminListEarnedMemberships(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; }): Promise<{ response: Response, data: Array<EarnedMembership> }> {
     const path = `/admin/earned_memberships`;
 
-    return makeRequest<adminListEarnedMembershipsReturnType>(
+    return makeRequest<Array<EarnedMembership>>(
         "GET",
         path,
         {
@@ -916,56 +869,42 @@ export function adminListEarnedMemberships(params: {  "pageNum"?: number; "order
 }
 /** 
 * Updates an earned membership
+* @param body 
 * @param id 
 */
-export function adminUpdateEarnedMembership(params: {  "id": string; }): Promise<{ response: Response, data: adminUpdateEarnedMembershipReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminUpdateEarnedMembership", 
-        params
-    );
-
+export function adminUpdateEarnedMembership(params: {  "body": EarnedMembership; "id": string; }): Promise<{ response: Response, data: EarnedMembership }> {
     const path = `/admin/earned_memberships/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<adminUpdateEarnedMembershipReturnType>(
+    return makeRequest<EarnedMembership>(
         "PUT",
         path,
+        params["body"]
     );
 }
 /** 
 * Gets an earned membership
 * @param id 
 */
-export function getEarnedMembership(params: {  "id": string; }): Promise<{ response: Response, data: getEarnedMembershipReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "getEarnedMembership", 
-        params
-    );
-
+export function getEarnedMembership(params: {  "id": string; }): Promise<{ response: Response, data: EarnedMembership }> {
     const path = `/earned_memberships/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<getEarnedMembershipReturnType>(
+    return makeRequest<EarnedMembership>(
         "GET",
         path,
     );
 }
-export type adminCreateInvoiceOptionReturnType = InlineResponse20012[keyof InlineResponse20012];
-export type adminDeleteInvoiceOptionReturnType = Response;
-export type adminUpdateInvoiceOptionReturnType = InlineResponse20012[keyof InlineResponse20012];
-export type getInvoiceOptionReturnType = InlineResponse20012[keyof InlineResponse20012];
-export type listInvoiceOptionsReturnType = InlineResponse20023[keyof InlineResponse20023];
 
 /** 
 * Creates an invoice option
+* @param body 
 */
-export function adminCreateInvoiceOption(): Promise<{ response: Response, data: adminCreateInvoiceOptionReturnType }> {
-
+export function adminCreateInvoiceOption(params: {  "body": NewInvoiceOption; }): Promise<{ response: Response, data: InvoiceOption }> {
     const path = `/admin/invoice_options`;
 
-    return makeRequest<adminCreateInvoiceOptionReturnType>(
+    return makeRequest<InvoiceOption>(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
@@ -973,12 +912,6 @@ export function adminCreateInvoiceOption(): Promise<{ response: Response, data: 
 * @param id 
 */
 export function adminDeleteInvoiceOption(params: {  "id": string; }): Promise<{ response: Response, data: undefined }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminDeleteInvoiceOption", 
-        params
-    );
-
     const path = `/admin/invoice_options/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest(
@@ -988,36 +921,26 @@ export function adminDeleteInvoiceOption(params: {  "id": string; }): Promise<{ 
 }
 /** 
 * Updates an invoice option
+* @param body 
 * @param id 
 */
-export function adminUpdateInvoiceOption(params: {  "id": string; }): Promise<{ response: Response, data: adminUpdateInvoiceOptionReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminUpdateInvoiceOption", 
-        params
-    );
-
+export function adminUpdateInvoiceOption(params: {  "body": InvoiceOption; "id": string; }): Promise<{ response: Response, data: InvoiceOption }> {
     const path = `/admin/invoice_options/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<adminUpdateInvoiceOptionReturnType>(
+    return makeRequest<InvoiceOption>(
         "PUT",
         path,
+        params["body"]
     );
 }
 /** 
 * Gets an Invoice Option
 * @param id 
 */
-export function getInvoiceOption(params: {  "id": string; }): Promise<{ response: Response, data: getInvoiceOptionReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "getInvoiceOption", 
-        params
-    );
-
+export function getInvoiceOption(params: {  "id": string; }): Promise<{ response: Response, data: InvoiceOption }> {
     const path = `/invoice_options/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<getInvoiceOptionReturnType>(
+    return makeRequest<InvoiceOption>(
         "GET",
         path,
     );
@@ -1030,16 +953,10 @@ export function getInvoiceOption(params: {  "id": string; }): Promise<{ response
 * @param subscriptionOnly 
 * @param types 
 */
-export function listInvoiceOptions(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "subscriptionOnly"?: boolean; "types"?: Array<string>; }): Promise<{ response: Response, data: listInvoiceOptionsReturnType }> {
-    validateRequiredParameters(
-        [], 
-        "listInvoiceOptions", 
-        params
-    );
-
+export function listInvoiceOptions(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "subscriptionOnly"?: boolean; "types"?: Array<string>; }): Promise<{ response: Response, data: Array<InvoiceOption> }> {
     const path = `/invoice_options`;
 
-    return makeRequest<listInvoiceOptionsReturnType>(
+    return makeRequest<Array<InvoiceOption>>(
         "GET",
         path,
         {
@@ -1051,23 +968,18 @@ export function listInvoiceOptions(params: {  "pageNum"?: number; "orderBy"?: st
         },
     );
 }
-export type adminCreateInvoicesReturnType = InlineResponse20014[keyof InlineResponse20014];
-export type adminDeleteInvoiceReturnType = Response;
-export type adminListInvoicesReturnType = InlineResponse20013[keyof InlineResponse20013];
-export type adminUpdateInvoiceReturnType = InlineResponse20014[keyof InlineResponse20014];
-export type createInvoiceReturnType = InlineResponse20014[keyof InlineResponse20014];
-export type listInvoicesReturnType = InlineResponse20013[keyof InlineResponse20013];
 
 /** 
 * Creates an invoice
+* @param body 
 */
-export function adminCreateInvoices(): Promise<{ response: Response, data: adminCreateInvoicesReturnType }> {
-
+export function adminCreateInvoices(params: {  "body": CreateInvoiceDetails; }): Promise<{ response: Response, data: Invoice }> {
     const path = `/admin/invoices`;
 
-    return makeRequest<adminCreateInvoicesReturnType>(
+    return makeRequest<Invoice>(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
@@ -1075,12 +987,6 @@ export function adminCreateInvoices(): Promise<{ response: Response, data: admin
 * @param id 
 */
 export function adminDeleteInvoice(params: {  "id": string; }): Promise<{ response: Response, data: undefined }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminDeleteInvoice", 
-        params
-    );
-
     const path = `/admin/invoices/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest(
@@ -1103,16 +1009,10 @@ export function adminDeleteInvoice(params: {  "id": string; }): Promise<{ respon
 * @param memberId 
 * @param resourceClass 
 */
-export function adminListInvoices(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "search"?: string; "settled"?: boolean; "pastDue"?: boolean; "refunded"?: boolean; "refundRequested"?: boolean; "planId"?: Array<string>; "resourceId"?: Array<string>; "memberId"?: Array<string>; "resourceClass"?: Array<string>; }): Promise<{ response: Response, data: adminListInvoicesReturnType }> {
-    validateRequiredParameters(
-        [], 
-        "adminListInvoices", 
-        params
-    );
-
+export function adminListInvoices(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "search"?: string; "settled"?: boolean; "pastDue"?: boolean; "refunded"?: boolean; "refundRequested"?: boolean; "planId"?: Array<string>; "resourceId"?: Array<string>; "memberId"?: Array<string>; "resourceClass"?: Array<string>; }): Promise<{ response: Response, data: Array<Invoice> }> {
     const path = `/admin/invoices`;
 
-    return makeRequest<adminListInvoicesReturnType>(
+    return makeRequest<Array<Invoice>>(
         "GET",
         path,
         {
@@ -1133,32 +1033,29 @@ export function adminListInvoices(params: {  "pageNum"?: number; "orderBy"?: str
 }
 /** 
 * Updates an invoice
+* @param body 
 * @param id 
 */
-export function adminUpdateInvoice(params: {  "id": string; }): Promise<{ response: Response, data: adminUpdateInvoiceReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminUpdateInvoice", 
-        params
-    );
-
+export function adminUpdateInvoice(params: {  "body": UpdateInvoiceDetails; "id": string; }): Promise<{ response: Response, data: Invoice }> {
     const path = `/admin/invoices/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<adminUpdateInvoiceReturnType>(
+    return makeRequest<Invoice>(
         "PUT",
         path,
+        params["body"]
     );
 }
 /** 
 * Create an invoice
+* @param body 
 */
-export function createInvoice(): Promise<{ response: Response, data: createInvoiceReturnType }> {
-
+export function createInvoice(params: {  "body": CreateInvoiceDetails1; }): Promise<{ response: Response, data: Invoice }> {
     const path = `/invoices`;
 
-    return makeRequest<createInvoiceReturnType>(
+    return makeRequest<Invoice>(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
@@ -1174,16 +1071,10 @@ export function createInvoice(): Promise<{ response: Response, data: createInvoi
 * @param resourceId 
 * @param resourceClass 
 */
-export function listInvoices(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "settled"?: boolean; "pastDue"?: boolean; "refunded"?: boolean; "refundRequested"?: boolean; "planId"?: Array<string>; "resourceId"?: Array<string>; "resourceClass"?: Array<string>; }): Promise<{ response: Response, data: listInvoicesReturnType }> {
-    validateRequiredParameters(
-        [], 
-        "listInvoices", 
-        params
-    );
-
+export function listInvoices(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "settled"?: boolean; "pastDue"?: boolean; "refunded"?: boolean; "refundRequested"?: boolean; "planId"?: Array<string>; "resourceId"?: Array<string>; "resourceClass"?: Array<string>; }): Promise<{ response: Response, data: Array<Invoice> }> {
     const path = `/invoices`;
 
-    return makeRequest<listInvoicesReturnType>(
+    return makeRequest<Array<Invoice>>(
         "GET",
         path,
         {
@@ -1200,56 +1091,42 @@ export function listInvoices(params: {  "pageNum"?: number; "orderBy"?: string; 
         },
     );
 }
-export type adminCreateMemberReturnType = InlineResponse20015[keyof InlineResponse20015];
-export type adminUpdateMemberReturnType = InlineResponse20015[keyof InlineResponse20015];
-export type getMemberReturnType = InlineResponse20015[keyof InlineResponse20015];
-export type listMembersReturnType = InlineResponse20025[keyof InlineResponse20025];
-export type updateMemberReturnType = InlineResponse20015[keyof InlineResponse20015];
 
 /** 
 * Creates a member
+* @param body 
 */
-export function adminCreateMember(): Promise<{ response: Response, data: adminCreateMemberReturnType }> {
-
+export function adminCreateMember(params: {  "body": NewMember; }): Promise<{ response: Response, data: Member }> {
     const path = `/admin/members`;
 
-    return makeRequest<adminCreateMemberReturnType>(
+    return makeRequest<Member>(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
 * Updates a member
+* @param body 
 * @param id 
 */
-export function adminUpdateMember(params: {  "id": string; }): Promise<{ response: Response, data: adminUpdateMemberReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminUpdateMember", 
-        params
-    );
-
+export function adminUpdateMember(params: {  "body": UpdateMemberDetails; "id": string; }): Promise<{ response: Response, data: Member }> {
     const path = `/admin/members/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<adminUpdateMemberReturnType>(
+    return makeRequest<Member>(
         "PUT",
         path,
+        params["body"]
     );
 }
 /** 
 * Gets a member
 * @param id 
 */
-export function getMember(params: {  "id": string; }): Promise<{ response: Response, data: getMemberReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "getMember", 
-        params
-    );
-
+export function getMember(params: {  "id": string; }): Promise<{ response: Response, data: Member }> {
     const path = `/members/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<getMemberReturnType>(
+    return makeRequest<Member>(
         "GET",
         path,
     );
@@ -1262,16 +1139,10 @@ export function getMember(params: {  "id": string; }): Promise<{ response: Respo
 * @param currentMembers 
 * @param search 
 */
-export function listMembers(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "currentMembers"?: boolean; "search"?: string; }): Promise<{ response: Response, data: listMembersReturnType }> {
-    validateRequiredParameters(
-        [], 
-        "listMembers", 
-        params
-    );
-
+export function listMembers(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "currentMembers"?: boolean; "search"?: string; }): Promise<{ response: Response, data: Array<MemberSummary> }> {
     const path = `/members`;
 
-    return makeRequest<listMembersReturnType>(
+    return makeRequest<Array<MemberSummary>>(
         "GET",
         path,
         {
@@ -1285,65 +1156,57 @@ export function listMembers(params: {  "pageNum"?: number; "orderBy"?: string; "
 }
 /** 
 * Updates a member and uploads signature
+* @param body 
 * @param id 
 */
-export function updateMember(params: {  "id": string; }): Promise<{ response: Response, data: updateMemberReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "updateMember", 
-        params
-    );
-
+export function updateMember(params: {  "body": UpdateMemberDetails1; "id": string; }): Promise<{ response: Response, data: Member }> {
     const path = `/members/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<updateMemberReturnType>(
+    return makeRequest<Member>(
         "PUT",
         path,
+        params["body"]
     );
 }
-export type requestPasswordResetReturnType = Response;
-export type resetPasswordReturnType = Response;
 
 /** 
 * Sends password reset instructions
+* @param body 
 */
-export function requestPasswordReset(): Promise<{ response: Response, data: undefined }> {
-
+export function requestPasswordReset(params: {  "body": PasswordResetDetails1; }): Promise<{ response: Response, data: undefined }> {
     const path = `/members/password`;
 
     return makeRequest(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
 * Updates member password
+* @param body 
 */
-export function resetPassword(): Promise<{ response: Response, data: undefined }> {
-
+export function resetPassword(params: {  "body": PasswordResetDetails; }): Promise<{ response: Response, data: undefined }> {
     const path = `/members/password`;
 
     return makeRequest(
         "PUT",
         path,
+        params["body"]
     );
 }
-export type createPaymentMethodReturnType = InlineResponse20020[keyof InlineResponse20020];
-export type deletePaymentMethodReturnType = Response;
-export type getNewPaymentMethodReturnType = InlineResponse20018[keyof InlineResponse20018];
-export type getPaymentMethodReturnType = InlineResponse20020[keyof InlineResponse20020];
-export type listPaymentMethodsReturnType = InlineResponse20019[keyof InlineResponse20019];
 
 /** 
 * Create an payment_method
+* @param body 
 */
-export function createPaymentMethod(): Promise<{ response: Response, data: createPaymentMethodReturnType }> {
-
+export function createPaymentMethod(params: {  "body": CreatePaymentMethodDetails; }): Promise<{ response: Response, data: CreditCard }> {
     const path = `/billing/payment_methods`;
 
-    return makeRequest<createPaymentMethodReturnType>(
+    return makeRequest<CreditCard>(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
@@ -1351,12 +1214,6 @@ export function createPaymentMethod(): Promise<{ response: Response, data: creat
 * @param id 
 */
 export function deletePaymentMethod(params: {  "id": string; }): Promise<{ response: Response, data: undefined }> {
-    validateRequiredParameters(
-        ["id"], 
-        "deletePaymentMethod", 
-        params
-    );
-
     const path = `/billing/payment_methods/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest(
@@ -1367,11 +1224,10 @@ export function deletePaymentMethod(params: {  "id": string; }): Promise<{ respo
 /** 
 * Initiate new payment method creation
 */
-export function getNewPaymentMethod(): Promise<{ response: Response, data: getNewPaymentMethodReturnType }> {
-
+export function getNewPaymentMethod(): Promise<{ response: Response, data: InlineResponse2001 }> {
     const path = `/billing/payment_methods/new`;
 
-    return makeRequest<getNewPaymentMethodReturnType>(
+    return makeRequest<InlineResponse2001>(
         "GET",
         path,
     );
@@ -1380,16 +1236,10 @@ export function getNewPaymentMethod(): Promise<{ response: Response, data: getNe
 * Get a payment method
 * @param id 
 */
-export function getPaymentMethod(params: {  "id": string; }): Promise<{ response: Response, data: getPaymentMethodReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "getPaymentMethod", 
-        params
-    );
-
+export function getPaymentMethod(params: {  "id": string; }): Promise<{ response: Response, data: CreditCard }> {
     const path = `/billing/payment_methods/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<getPaymentMethodReturnType>(
+    return makeRequest<CreditCard>(
         "GET",
         path,
     );
@@ -1397,36 +1247,27 @@ export function getPaymentMethod(params: {  "id": string; }): Promise<{ response
 /** 
 * Gets a list of payment_methods
 */
-export function listPaymentMethods(): Promise<{ response: Response, data: listPaymentMethodsReturnType }> {
-
+export function listPaymentMethods(): Promise<{ response: Response, data: Array<CreditCard | PayPalAccount> }> {
     const path = `/billing/payment_methods`;
 
-    return makeRequest<listPaymentMethodsReturnType>(
+    return makeRequest<Array<CreditCard | PayPalAccount>>(
         "GET",
         path,
     );
 }
-export type listMembersPermissionsReturnType = InlineResponse20024[keyof InlineResponse20024];
 
 /** 
 * Gets a member&#39;s permissions
 * @param id 
 */
-export function listMembersPermissions(params: {  "id": string; }): Promise<{ response: Response, data: listMembersPermissionsReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "listMembersPermissions", 
-        params
-    );
-
+export function listMembersPermissions(params: {  "id": string; }): Promise<{ response: Response, data: any }> {
     const path = `/members/{id}/permissions`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<listMembersPermissionsReturnType>(
+    return makeRequest<any>(
         "GET",
         path,
     );
 }
-export type adminListBillingPlansReturnType = InlineResponse2001[keyof InlineResponse2001];
 
 /** 
 * Gets a list of billing plans
@@ -1435,16 +1276,10 @@ export type adminListBillingPlansReturnType = InlineResponse2001[keyof InlineRes
 * @param order 
 * @param types 
 */
-export function adminListBillingPlans(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "types"?: Array<string>; }): Promise<{ response: Response, data: adminListBillingPlansReturnType }> {
-    validateRequiredParameters(
-        [], 
-        "adminListBillingPlans", 
-        params
-    );
-
+export function adminListBillingPlans(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "types"?: Array<string>; }): Promise<{ response: Response, data: Array<Plan> }> {
     const path = `/admin/billing/plans`;
 
-    return makeRequest<adminListBillingPlansReturnType>(
+    return makeRequest<Array<Plan>>(
         "GET",
         path,
         {
@@ -1455,20 +1290,12 @@ export function adminListBillingPlans(params: {  "pageNum"?: number; "orderBy"?:
         },
     );
 }
-export type adminGetReceiptReturnType = Response;
-export type getReceiptReturnType = Response;
 
 /** 
 * Get a receipt for an invoice
 * @param id 
 */
 export function adminGetReceipt(params: {  "id": string; }): Promise<{ response: Response, data: undefined }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminGetReceipt", 
-        params
-    );
-
     const path = `/admin/billing/receipts/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest(
@@ -1481,12 +1308,6 @@ export function adminGetReceipt(params: {  "id": string; }): Promise<{ response:
 * @param id 
 */
 export function getReceipt(params: {  "id": string; }): Promise<{ response: Response, data: undefined }> {
-    validateRequiredParameters(
-        ["id"], 
-        "getReceipt", 
-        params
-    );
-
     const path = `/billing/receipts/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest(
@@ -1494,24 +1315,18 @@ export function getReceipt(params: {  "id": string; }): Promise<{ response: Resp
         path,
     );
 }
-export type adminCreateRentalReturnType = InlineResponse20017[keyof InlineResponse20017];
-export type adminDeleteRentalReturnType = Response;
-export type adminListRentalsReturnType = InlineResponse20016[keyof InlineResponse20016];
-export type adminUpdateRentalReturnType = InlineResponse20017[keyof InlineResponse20017];
-export type getRentalReturnType = InlineResponse20017[keyof InlineResponse20017];
-export type listRentalsReturnType = InlineResponse20016[keyof InlineResponse20016];
-export type updateRentalReturnType = InlineResponse20017[keyof InlineResponse20017];
 
 /** 
 * Creates a rental
+* @param body 
 */
-export function adminCreateRental(): Promise<{ response: Response, data: adminCreateRentalReturnType }> {
-
+export function adminCreateRental(params: {  "body": NewRental; }): Promise<{ response: Response, data: Rental }> {
     const path = `/admin/rentals`;
 
-    return makeRequest<adminCreateRentalReturnType>(
+    return makeRequest<Rental>(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
@@ -1519,12 +1334,6 @@ export function adminCreateRental(): Promise<{ response: Response, data: adminCr
 * @param id 
 */
 export function adminDeleteRental(params: {  "id": string; }): Promise<{ response: Response, data: undefined }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminDeleteRental", 
-        params
-    );
-
     const path = `/admin/rentals/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest(
@@ -1540,16 +1349,10 @@ export function adminDeleteRental(params: {  "id": string; }): Promise<{ respons
 * @param search 
 * @param memberId 
 */
-export function adminListRentals(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "search"?: string; "memberId"?: string; }): Promise<{ response: Response, data: adminListRentalsReturnType }> {
-    validateRequiredParameters(
-        [], 
-        "adminListRentals", 
-        params
-    );
-
+export function adminListRentals(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "search"?: string; "memberId"?: string; }): Promise<{ response: Response, data: Array<Rental> }> {
     const path = `/admin/rentals`;
 
-    return makeRequest<adminListRentalsReturnType>(
+    return makeRequest<Array<Rental>>(
         "GET",
         path,
         {
@@ -1563,36 +1366,26 @@ export function adminListRentals(params: {  "pageNum"?: number; "orderBy"?: stri
 }
 /** 
 * Updates a rental
+* @param body 
 * @param id 
 */
-export function adminUpdateRental(params: {  "id": string; }): Promise<{ response: Response, data: adminUpdateRentalReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminUpdateRental", 
-        params
-    );
-
+export function adminUpdateRental(params: {  "body": Rental; "id": string; }): Promise<{ response: Response, data: Rental }> {
     const path = `/admin/rentals/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<adminUpdateRentalReturnType>(
+    return makeRequest<Rental>(
         "PUT",
         path,
+        params["body"]
     );
 }
 /** 
 * Gets a rental
 * @param id 
 */
-export function getRental(params: {  "id": string; }): Promise<{ response: Response, data: getRentalReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "getRental", 
-        params
-    );
-
+export function getRental(params: {  "id": string; }): Promise<{ response: Response, data: Rental }> {
     const path = `/rentals/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<getRentalReturnType>(
+    return makeRequest<Rental>(
         "GET",
         path,
     );
@@ -1603,16 +1396,10 @@ export function getRental(params: {  "id": string; }): Promise<{ response: Respo
 * @param orderBy 
 * @param order 
 */
-export function listRentals(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; }): Promise<{ response: Response, data: listRentalsReturnType }> {
-    validateRequiredParameters(
-        [], 
-        "listRentals", 
-        params
-    );
-
+export function listRentals(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; }): Promise<{ response: Response, data: Array<Rental> }> {
     const path = `/rentals`;
 
-    return makeRequest<listRentalsReturnType>(
+    return makeRequest<Array<Rental>>(
         "GET",
         path,
         {
@@ -1624,25 +1411,18 @@ export function listRentals(params: {  "pageNum"?: number; "orderBy"?: string; "
 }
 /** 
 * Updates a rental and uploads signature
+* @param body 
 * @param id 
 */
-export function updateRental(params: {  "id": string; }): Promise<{ response: Response, data: updateRentalReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "updateRental", 
-        params
-    );
-
+export function updateRental(params: {  "body": UpdateRentalDetails; "id": string; }): Promise<{ response: Response, data: Rental }> {
     const path = `/rentals/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<updateRentalReturnType>(
+    return makeRequest<Rental>(
         "PUT",
         path,
+        params["body"]
     );
 }
-export type adminListEarnedMembershipReportsReturnType = InlineResponse2009[keyof InlineResponse2009];
-export type createEarnedMembershipReportReturnType = InlineResponse20022[keyof InlineResponse20022];
-export type listEarnedMembershipReportsReturnType = InlineResponse2009[keyof InlineResponse2009];
 
 /** 
 * Gets a list of reports
@@ -1651,16 +1431,10 @@ export type listEarnedMembershipReportsReturnType = InlineResponse2009[keyof Inl
 * @param orderBy 
 * @param order 
 */
-export function adminListEarnedMembershipReports(params: {  "id": string; "pageNum"?: number; "orderBy"?: string; "order"?: string; }): Promise<{ response: Response, data: adminListEarnedMembershipReportsReturnType }> {
-    validateRequiredParameters(
-        ["id",], 
-        "adminListEarnedMembershipReports", 
-        params
-    );
-
+export function adminListEarnedMembershipReports(params: {  "id": string; "pageNum"?: number; "orderBy"?: string; "order"?: string; }): Promise<{ response: Response, data: Array<Report> }> {
     const path = `/admin/earned_memberships/{id}/reports`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<adminListEarnedMembershipReportsReturnType>(
+    return makeRequest<Array<Report>>(
         "GET",
         path,
         {
@@ -1672,20 +1446,16 @@ export function adminListEarnedMembershipReports(params: {  "id": string; "pageN
 }
 /** 
 * Create an report
+* @param body 
 * @param id 
 */
-export function createEarnedMembershipReport(params: {  "id": string; }): Promise<{ response: Response, data: createEarnedMembershipReportReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "createEarnedMembershipReport", 
-        params
-    );
-
+export function createEarnedMembershipReport(params: {  "body": NewReport; "id": string; }): Promise<{ response: Response, data: Report }> {
     const path = `/earned_memberships/{id}/reports`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<createEarnedMembershipReportReturnType>(
+    return makeRequest<Report>(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
@@ -1695,16 +1465,10 @@ export function createEarnedMembershipReport(params: {  "id": string; }): Promis
 * @param orderBy 
 * @param order 
 */
-export function listEarnedMembershipReports(params: {  "id": string; "pageNum"?: number; "orderBy"?: string; "order"?: string; }): Promise<{ response: Response, data: listEarnedMembershipReportsReturnType }> {
-    validateRequiredParameters(
-        ["id",], 
-        "listEarnedMembershipReports", 
-        params
-    );
-
+export function listEarnedMembershipReports(params: {  "id": string; "pageNum"?: number; "orderBy"?: string; "order"?: string; }): Promise<{ response: Response, data: Array<Report> }> {
     const path = `/earned_memberships/{id}/reports`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<listEarnedMembershipReportsReturnType>(
+    return makeRequest<Array<Report>>(
         "GET",
         path,
         {
@@ -1714,23 +1478,12 @@ export function listEarnedMembershipReports(params: {  "id": string; "pageNum"?:
         },
     );
 }
-export type adminCancelSubscriptionReturnType = Response;
-export type adminListSubscriptionsReturnType = InlineResponse2003[keyof InlineResponse2003];
-export type cancelSubscriptionReturnType = Response;
-export type getSubscriptionReturnType = InlineResponse20021[keyof InlineResponse20021];
-export type updateSubscriptionReturnType = InlineResponse20021[keyof InlineResponse20021];
 
 /** 
 * Cancels a subscription
 * @param id 
 */
 export function adminCancelSubscription(params: {  "id": string; }): Promise<{ response: Response, data: undefined }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminCancelSubscription", 
-        params
-    );
-
     const path = `/admin/billing/subscriptions/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest(
@@ -1747,16 +1500,10 @@ export function adminCancelSubscription(params: {  "id": string; }): Promise<{ r
 * @param subscriptionStatus 
 * @param customerId 
 */
-export function adminListSubscriptions(params: {  "startDate"?: string; "endDate"?: string; "search"?: string; "planId"?: Array<string>; "subscriptionStatus"?: Array<string>; "customerId"?: string; }): Promise<{ response: Response, data: adminListSubscriptionsReturnType }> {
-    validateRequiredParameters(
-        [], 
-        "adminListSubscriptions", 
-        params
-    );
-
+export function adminListSubscriptions(params: {  "startDate"?: string; "endDate"?: string; "search"?: string; "planId"?: Array<string>; "subscriptionStatus"?: Array<string>; "customerId"?: string; }): Promise<{ response: Response, data: Array<Subscription> }> {
     const path = `/admin/billing/subscriptions`;
 
-    return makeRequest<adminListSubscriptionsReturnType>(
+    return makeRequest<Array<Subscription>>(
         "GET",
         path,
         {
@@ -1774,12 +1521,6 @@ export function adminListSubscriptions(params: {  "startDate"?: string; "endDate
 * @param id 
 */
 export function cancelSubscription(params: {  "id": string; }): Promise<{ response: Response, data: undefined }> {
-    validateRequiredParameters(
-        ["id"], 
-        "cancelSubscription", 
-        params
-    );
-
     const path = `/billing/subscriptions/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest(
@@ -1791,56 +1532,34 @@ export function cancelSubscription(params: {  "id": string; }): Promise<{ respon
 * Gets a subscription
 * @param id 
 */
-export function getSubscription(params: {  "id": string; }): Promise<{ response: Response, data: getSubscriptionReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "getSubscription", 
-        params
-    );
-
+export function getSubscription(params: {  "id": string; }): Promise<{ response: Response, data: Subscription }> {
     const path = `/billing/subscriptions/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<getSubscriptionReturnType>(
+    return makeRequest<Subscription>(
         "GET",
         path,
     );
 }
 /** 
 * Update a subscription
+* @param body 
 * @param id 
 */
-export function updateSubscription(params: {  "id": string; }): Promise<{ response: Response, data: updateSubscriptionReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "updateSubscription", 
-        params
-    );
-
+export function updateSubscription(params: {  "body": UpdateSubscriptionDetails; "id": string; }): Promise<{ response: Response, data: Subscription }> {
     const path = `/billing/subscriptions/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<updateSubscriptionReturnType>(
+    return makeRequest<Subscription>(
         "PUT",
         path,
+        params["body"]
     );
 }
-export type adminDeleteTransactionReturnType = Response;
-export type adminGetTransactionReturnType = InlineResponse2005[keyof InlineResponse2005];
-export type adminListTransactionReturnType = InlineResponse2004[keyof InlineResponse2004];
-export type createTransactionReturnType = InlineResponse2005[keyof InlineResponse2005];
-export type deleteTransactionReturnType = Response;
-export type listTransactionsReturnType = InlineResponse2004[keyof InlineResponse2004];
 
 /** 
 * Request refund for a transaction
 * @param id 
 */
 export function adminDeleteTransaction(params: {  "id": string; }): Promise<{ response: Response, data: undefined }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminDeleteTransaction", 
-        params
-    );
-
     const path = `/admin/billing/transactions/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest(
@@ -1852,16 +1571,10 @@ export function adminDeleteTransaction(params: {  "id": string; }): Promise<{ re
 * Gets a transaction
 * @param id 
 */
-export function adminGetTransaction(params: {  "id": string; }): Promise<{ response: Response, data: adminGetTransactionReturnType }> {
-    validateRequiredParameters(
-        ["id"], 
-        "adminGetTransaction", 
-        params
-    );
-
+export function adminGetTransaction(params: {  "id": string; }): Promise<{ response: Response, data: Transaction }> {
     const path = `/admin/billing/transactions/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
-    return makeRequest<adminGetTransactionReturnType>(
+    return makeRequest<Transaction>(
         "GET",
         path,
     );
@@ -1875,16 +1588,10 @@ export function adminGetTransaction(params: {  "id": string; }): Promise<{ respo
 * @param transactionStatus 
 * @param customerId 
 */
-export function adminListTransaction(params: {  "startDate"?: string; "endDate"?: string; "refund"?: boolean; "type"?: string; "transactionStatus"?: Array<string>; "customerId"?: string; }): Promise<{ response: Response, data: adminListTransactionReturnType }> {
-    validateRequiredParameters(
-        [], 
-        "adminListTransaction", 
-        params
-    );
-
+export function adminListTransaction(params: {  "startDate"?: string; "endDate"?: string; "refund"?: boolean; "type"?: string; "transactionStatus"?: Array<string>; "customerId"?: string; }): Promise<{ response: Response, data: Array<Transaction> }> {
     const path = `/admin/billing/transactions`;
 
-    return makeRequest<adminListTransactionReturnType>(
+    return makeRequest<Array<Transaction>>(
         "GET",
         path,
         {
@@ -1899,14 +1606,15 @@ export function adminListTransaction(params: {  "startDate"?: string; "endDate"?
 }
 /** 
 * Create an transaction
+* @param body 
 */
-export function createTransaction(): Promise<{ response: Response, data: createTransactionReturnType }> {
-
+export function createTransaction(params: {  "body": CreateTransactionDetails; }): Promise<{ response: Response, data: Transaction }> {
     const path = `/billing/transactions`;
 
-    return makeRequest<createTransactionReturnType>(
+    return makeRequest<Transaction>(
         "POST",
         path,
+        params["body"]
     );
 }
 /** 
@@ -1914,12 +1622,6 @@ export function createTransaction(): Promise<{ response: Response, data: createT
 * @param id 
 */
 export function deleteTransaction(params: {  "id": string; }): Promise<{ response: Response, data: undefined }> {
-    validateRequiredParameters(
-        ["id"], 
-        "deleteTransaction", 
-        params
-    );
-
     const path = `/billing/transactions/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest(
@@ -1936,16 +1638,10 @@ export function deleteTransaction(params: {  "id": string; }): Promise<{ respons
 * @param transactionStatus 
 * @param paymentMethodToken 
 */
-export function listTransactions(params: {  "startDate"?: string; "endDate"?: string; "refund"?: boolean; "type"?: string; "transactionStatus"?: Array<string>; "paymentMethodToken"?: Array<string>; }): Promise<{ response: Response, data: listTransactionsReturnType }> {
-    validateRequiredParameters(
-        [], 
-        "listTransactions", 
-        params
-    );
-
+export function listTransactions(params: {  "startDate"?: string; "endDate"?: string; "refund"?: boolean; "type"?: string; "transactionStatus"?: Array<string>; "paymentMethodToken"?: Array<string>; }): Promise<{ response: Response, data: Array<Transaction> }> {
     const path = `/billing/transactions`;
 
-    return makeRequest<listTransactionsReturnType>(
+    return makeRequest<Array<Transaction>>(
         "GET",
         path,
         {
