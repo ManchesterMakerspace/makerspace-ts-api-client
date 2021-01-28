@@ -44,7 +44,13 @@ const parseQueryParams = (params: { [key: string]: any }) =>
 const constructQueryParam = (key: string, value: string): string =>
   `${key}=${encodeURIComponent(value)}`;
 
-export const makeRequest = <T>(
+const defaultError = {
+  status: 500,
+  message: defaultMessage,
+  error: "internal_server_error"
+};
+
+export const makeRequest = async <T>(
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
   path: string,
   params?: { [key: string]: any },
@@ -59,39 +65,43 @@ export const makeRequest = <T>(
     }
   }
 
-  return window.fetch(url, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
-    },
-    method,
-    body
-  })
-  .then(async (response: Response) => {
+  try {
+    const response = await window.fetch(url, {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+      },
+      method,
+      body
+    });
+
     const result: ApiDataResponse<T> = {
       response: response.clone(),
       data: undefined
     }
 
     try {
-      result.data = await result.response.json()
+        if (result.response.status !== 204) {
+            result.data = await result.response.json()
+        }
     } catch { }
 
     if (result.response.status >= 200 && result.response.status < 300) {
       return result;
     } else {
       return {
-        response: result.response,
-        data: undefined,
-        error: (result.data as unknown as ApiError)|| {
-          status: 500,
-          message: defaultMessage,
-          error: "internal_server_error"
-        }
+        ...result,
+        error: (result.data as unknown as ApiError) || defaultError,
       };
     }
-  });
+  } catch (e) {
+    return {
+      response: e,
+      data: undefined,
+      error: defaultError
+    };
+  }
 };
 
 const getCookie = (name: string): string => {
@@ -107,18 +117,6 @@ const getCookie = (name: string): string => {
   }
   return decodeURIComponent(xsrfCookies[0].split('=')[1]);
 };
-
-function validateRequiredParameters(
-  required: string[],
-  operationName: string,
-  params: { [key: string]: any }
-) {
-  required.forEach(requiredParameter => {
-    if (params[requiredParameter] === null) {
-      throw new Error(`Missing required parameter ${requiredParameter} when calling ${operationName}`);
-    }
-  });
-}
 
 /* tslint:disable */
 
@@ -749,7 +747,7 @@ export function adminListCards(params: {  "memberId": string; }): Promise<{ resp
         "GET",
         path,
         {
-            "memberId": { values: params["memberId"] }
+            ...params["memberId"] !== undefined && { "memberId": params["memberId"] }
         },
     );
 }
@@ -797,11 +795,11 @@ export function adminListBillingPlanDiscounts(params: {  "pageNum"?: number; "or
         "GET",
         path,
         {
-            "pageNum": { values: params["pageNum"] },
-            "orderBy": { values: params["orderBy"] },
-            "order": { values: params["order"] },
-            "subscriptionOnly": { values: params["subscriptionOnly"] },
-            "types": { values: params["types"], collectionFormat: "multi" }
+            ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
+            ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
+            ...params["order"] !== undefined && { "order": params["order"] },
+            ...params["subscriptionOnly"] !== undefined && { "subscriptionOnly": params["subscriptionOnly"] },
+            ...params["types"] !== undefined && { "types": params["types"] }
         },
     );
 }
@@ -818,7 +816,7 @@ export function getDocument(params: {  "id": string; "resourceId"?: string; }): 
         "GET",
         path,
         {
-            "resourceId": { values: params["resourceId"] }
+            ...params["resourceId"] !== undefined && { "resourceId": params["resourceId"] }
         },
     );
 }
@@ -861,9 +859,9 @@ export function adminListEarnedMemberships(params: {  "pageNum"?: number; "order
         "GET",
         path,
         {
-            "pageNum": { values: params["pageNum"] },
-            "orderBy": { values: params["orderBy"] },
-            "order": { values: params["order"] }
+            ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
+            ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
+            ...params["order"] !== undefined && { "order": params["order"] }
         },
     );
 }
@@ -960,11 +958,11 @@ export function listInvoiceOptions(params: {  "pageNum"?: number; "orderBy"?: st
         "GET",
         path,
         {
-            "pageNum": { values: params["pageNum"] },
-            "orderBy": { values: params["orderBy"] },
-            "order": { values: params["order"] },
-            "subscriptionOnly": { values: params["subscriptionOnly"] },
-            "types": { values: params["types"], collectionFormat: "multi" }
+            ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
+            ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
+            ...params["order"] !== undefined && { "order": params["order"] },
+            ...params["subscriptionOnly"] !== undefined && { "subscriptionOnly": params["subscriptionOnly"] },
+            ...params["types"] !== undefined && { "types": params["types"] }
         },
     );
 }
@@ -1016,18 +1014,18 @@ export function adminListInvoices(params: {  "pageNum"?: number; "orderBy"?: str
         "GET",
         path,
         {
-            "pageNum": { values: params["pageNum"] },
-            "orderBy": { values: params["orderBy"] },
-            "order": { values: params["order"] },
-            "search": { values: params["search"] },
-            "settled": { values: params["settled"] },
-            "pastDue": { values: params["pastDue"] },
-            "refunded": { values: params["refunded"] },
-            "refundRequested": { values: params["refundRequested"] },
-            "planId": { values: params["planId"], collectionFormat: "multi" },
-            "resourceId": { values: params["resourceId"], collectionFormat: "multi" },
-            "memberId": { values: params["memberId"], collectionFormat: "multi" },
-            "resourceClass": { values: params["resourceClass"], collectionFormat: "multi" }
+            ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
+            ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
+            ...params["order"] !== undefined && { "order": params["order"] },
+            ...params["search"] !== undefined && { "search": params["search"] },
+            ...params["settled"] !== undefined && { "settled": params["settled"] },
+            ...params["pastDue"] !== undefined && { "pastDue": params["pastDue"] },
+            ...params["refunded"] !== undefined && { "refunded": params["refunded"] },
+            ...params["refundRequested"] !== undefined && { "refundRequested": params["refundRequested"] },
+            ...params["planId"] !== undefined && { "planId": params["planId"] },
+            ...params["resourceId"] !== undefined && { "resourceId": params["resourceId"] },
+            ...params["memberId"] !== undefined && { "memberId": params["memberId"] },
+            ...params["resourceClass"] !== undefined && { "resourceClass": params["resourceClass"] }
         },
     );
 }
@@ -1078,16 +1076,16 @@ export function listInvoices(params: {  "pageNum"?: number; "orderBy"?: string; 
         "GET",
         path,
         {
-            "pageNum": { values: params["pageNum"] },
-            "orderBy": { values: params["orderBy"] },
-            "order": { values: params["order"] },
-            "settled": { values: params["settled"] },
-            "pastDue": { values: params["pastDue"] },
-            "refunded": { values: params["refunded"] },
-            "refundRequested": { values: params["refundRequested"] },
-            "planId": { values: params["planId"], collectionFormat: "multi" },
-            "resourceId": { values: params["resourceId"], collectionFormat: "multi" },
-            "resourceClass": { values: params["resourceClass"], collectionFormat: "multi" }
+            ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
+            ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
+            ...params["order"] !== undefined && { "order": params["order"] },
+            ...params["settled"] !== undefined && { "settled": params["settled"] },
+            ...params["pastDue"] !== undefined && { "pastDue": params["pastDue"] },
+            ...params["refunded"] !== undefined && { "refunded": params["refunded"] },
+            ...params["refundRequested"] !== undefined && { "refundRequested": params["refundRequested"] },
+            ...params["planId"] !== undefined && { "planId": params["planId"] },
+            ...params["resourceId"] !== undefined && { "resourceId": params["resourceId"] },
+            ...params["resourceClass"] !== undefined && { "resourceClass": params["resourceClass"] }
         },
     );
 }
@@ -1146,11 +1144,11 @@ export function listMembers(params: {  "pageNum"?: number; "orderBy"?: string; "
         "GET",
         path,
         {
-            "pageNum": { values: params["pageNum"] },
-            "orderBy": { values: params["orderBy"] },
-            "order": { values: params["order"] },
-            "currentMembers": { values: params["currentMembers"] },
-            "search": { values: params["search"] }
+            ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
+            ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
+            ...params["order"] !== undefined && { "order": params["order"] },
+            ...params["currentMembers"] !== undefined && { "currentMembers": params["currentMembers"] },
+            ...params["search"] !== undefined && { "search": params["search"] }
         },
     );
 }
@@ -1283,10 +1281,10 @@ export function adminListBillingPlans(params: {  "pageNum"?: number; "orderBy"?:
         "GET",
         path,
         {
-            "pageNum": { values: params["pageNum"] },
-            "orderBy": { values: params["orderBy"] },
-            "order": { values: params["order"] },
-            "types": { values: params["types"], collectionFormat: "multi" }
+            ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
+            ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
+            ...params["order"] !== undefined && { "order": params["order"] },
+            ...params["types"] !== undefined && { "types": params["types"] }
         },
     );
 }
@@ -1356,11 +1354,11 @@ export function adminListRentals(params: {  "pageNum"?: number; "orderBy"?: stri
         "GET",
         path,
         {
-            "pageNum": { values: params["pageNum"] },
-            "orderBy": { values: params["orderBy"] },
-            "order": { values: params["order"] },
-            "search": { values: params["search"] },
-            "memberId": { values: params["memberId"] }
+            ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
+            ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
+            ...params["order"] !== undefined && { "order": params["order"] },
+            ...params["search"] !== undefined && { "search": params["search"] },
+            ...params["memberId"] !== undefined && { "memberId": params["memberId"] }
         },
     );
 }
@@ -1403,9 +1401,9 @@ export function listRentals(params: {  "pageNum"?: number; "orderBy"?: string; "
         "GET",
         path,
         {
-            "pageNum": { values: params["pageNum"] },
-            "orderBy": { values: params["orderBy"] },
-            "order": { values: params["order"] }
+            ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
+            ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
+            ...params["order"] !== undefined && { "order": params["order"] }
         },
     );
 }
@@ -1438,9 +1436,9 @@ export function adminListEarnedMembershipReports(params: {  "id": string; "pageN
         "GET",
         path,
         {
-            "pageNum": { values: params["pageNum"] },
-            "orderBy": { values: params["orderBy"] },
-            "order": { values: params["order"] }
+            ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
+            ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
+            ...params["order"] !== undefined && { "order": params["order"] }
         },
     );
 }
@@ -1472,9 +1470,9 @@ export function listEarnedMembershipReports(params: {  "id": string; "pageNum"?:
         "GET",
         path,
         {
-            "pageNum": { values: params["pageNum"] },
-            "orderBy": { values: params["orderBy"] },
-            "order": { values: params["order"] }
+            ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
+            ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
+            ...params["order"] !== undefined && { "order": params["order"] }
         },
     );
 }
@@ -1507,12 +1505,12 @@ export function adminListSubscriptions(params: {  "startDate"?: string; "endDate
         "GET",
         path,
         {
-            "startDate": { values: params["startDate"] },
-            "endDate": { values: params["endDate"] },
-            "search": { values: params["search"] },
-            "planId": { values: params["planId"], collectionFormat: "multi" },
-            "subscriptionStatus": { values: params["subscriptionStatus"], collectionFormat: "multi" },
-            "customerId": { values: params["customerId"] }
+            ...params["startDate"] !== undefined && { "startDate": params["startDate"] },
+            ...params["endDate"] !== undefined && { "endDate": params["endDate"] },
+            ...params["search"] !== undefined && { "search": params["search"] },
+            ...params["planId"] !== undefined && { "planId": params["planId"] },
+            ...params["subscriptionStatus"] !== undefined && { "subscriptionStatus": params["subscriptionStatus"] },
+            ...params["customerId"] !== undefined && { "customerId": params["customerId"] }
         },
     );
 }
@@ -1595,12 +1593,12 @@ export function adminListTransaction(params: {  "startDate"?: string; "endDate"?
         "GET",
         path,
         {
-            "startDate": { values: params["startDate"] },
-            "endDate": { values: params["endDate"] },
-            "refund": { values: params["refund"] },
-            "type": { values: params["type"] },
-            "transactionStatus": { values: params["transactionStatus"], collectionFormat: "multi" },
-            "customerId": { values: params["customerId"] }
+            ...params["startDate"] !== undefined && { "startDate": params["startDate"] },
+            ...params["endDate"] !== undefined && { "endDate": params["endDate"] },
+            ...params["refund"] !== undefined && { "refund": params["refund"] },
+            ...params["type"] !== undefined && { "type": params["type"] },
+            ...params["transactionStatus"] !== undefined && { "transactionStatus": params["transactionStatus"] },
+            ...params["customerId"] !== undefined && { "customerId": params["customerId"] }
         },
     );
 }
@@ -1645,12 +1643,12 @@ export function listTransactions(params: {  "startDate"?: string; "endDate"?: st
         "GET",
         path,
         {
-            "startDate": { values: params["startDate"] },
-            "endDate": { values: params["endDate"] },
-            "refund": { values: params["refund"] },
-            "type": { values: params["type"] },
-            "transactionStatus": { values: params["transactionStatus"], collectionFormat: "multi" },
-            "paymentMethodToken": { values: params["paymentMethodToken"], collectionFormat: "multi" }
+            ...params["startDate"] !== undefined && { "startDate": params["startDate"] },
+            ...params["endDate"] !== undefined && { "endDate": params["endDate"] },
+            ...params["refund"] !== undefined && { "refund": params["refund"] },
+            ...params["type"] !== undefined && { "type": params["type"] },
+            ...params["transactionStatus"] !== undefined && { "transactionStatus": params["transactionStatus"] },
+            ...params["paymentMethodToken"] !== undefined && { "paymentMethodToken": params["paymentMethodToken"] }
         },
     );
 }

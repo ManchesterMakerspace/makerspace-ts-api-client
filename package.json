@@ -1,6 +1,6 @@
 {
   "name": "makerspace-ts-api-client",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "main": "dist/apiClient.js",
   "types": "dist/apiClient.d.ts",
   "author": "Will Lynch <will.lynch91@gmail.com>",
@@ -17,7 +17,7 @@
   "devDependencies": {
     "@types/node": "^12.6.2",
     "@types/yargs": "^15.0.12",
-    "makerspace-ts-api-client-generator": "2.1.5",
+    "makerspace-ts-api-client-generator": "2.2.5",
     "ts-node": "^9.1.1",
     "typescript": "^3.5.2"
   }
