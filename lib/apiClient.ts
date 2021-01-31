@@ -82,9 +82,7 @@ export const makeRequest = async <T>(
     }
 
     try {
-        if (result.response.status !== 204) {
-            result.data = await result.response.json()
-        }
+      result.data = await result.response.json()
     } catch { }
 
     if (result.response.status >= 200 && result.response.status < 300) {
@@ -102,6 +100,40 @@ export const makeRequest = async <T>(
       error: defaultError
     };
   }
+
+  return window.fetch(url, {
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+    },
+    method,
+    body
+  })
+  .then(async (response: Response) => {
+    const result: ApiDataResponse<T> = {
+      response: response.clone(),
+      data: undefined
+    }
+
+    try {
+      result.data = await result.response.json()
+    } catch { }
+
+    if (result.response.status >= 200 && result.response.status < 300) {
+      return result;
+    } else {
+      return {
+        response: result.response,
+        data: undefined,
+        error: (result.data as unknown as ApiError)|| {
+          status: 500,
+          message: defaultMessage,
+          error: "internal_server_error"
+        }
+      };
+    }
+  });
 };
 
 const getCookie = (name: string): string => {
@@ -279,7 +311,6 @@ export interface InvoiceOption {
     "quantity": number;
     "discountId"?: string;
     "disabled": boolean;
-    "operation": string;
     "isPromotion"?: boolean;
 }
 
@@ -353,23 +384,23 @@ export interface NewEarnedMembership {
 
 export interface NewInvoiceOption {
     "name": string;
-    "description": string;
     "amount": string;
-    "planId"?: string;
     "resourceClass": InvoiceableResource;
     "quantity": number;
+    "description"?: string;
+    "planId"?: string;
     "discountId"?: string;
-    "disabled": boolean;
-    "isPromotion": boolean;
+    "disabled"?: boolean;
+    "isPromotion"?: boolean;
 }
 
 export interface NewMember {
     "firstname": string;
     "lastname": string;
     "email": string;
-    "status": MemberStatus;
-    "role": MemberRole;
-    "memberContractOnFile": boolean;
+    "status"?: MemberStatus;
+    "role"?: MemberRole;
+    "memberContractOnFile"?: boolean;
     "phone": string;
     "address": NewMemberAddress;
 }
@@ -384,10 +415,10 @@ export interface NewMemberAddress {
 
 export interface NewRental {
     "number": string;
-    "description"?: string;
     "memberId": string;
-    "expiration": number;
-    "contractOnFile": boolean;
+    "description"?: string;
+    "expiration"?: number;
+    "contractOnFile"?: boolean;
 }
 
 export interface NewReport {
