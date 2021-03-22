@@ -154,12 +154,20 @@ const getCookie = (name: string): string => {
 
 /* tslint:disable */
 
-export interface AdminmembersidAddress {
-    "street"?: string;
-    "unit"?: string;
-    "city"?: string;
-    "state"?: string;
-    "postalCode"?: string;
+export interface AdminUpdateMemberDetails extends BaseMember {
+    "renew"?: number;
+    "subscription"?: boolean;
+    "expirationTime"?: number;
+}
+
+export interface BaseMember {
+    "firstname"?: string;
+    "lastname"?: string;
+    "email"?: string;
+    "phone"?: string;
+    "silenceEmails"?: string;
+    "notes"?: string;
+    "address"?: MembersAddress;
 }
 
 export interface Card {
@@ -320,23 +328,14 @@ export enum InvoiceableResource {
     Member = 'member',
     Rental = 'rental'
 }
-export interface Member {
-    "id": string;
-    "firstname": string;
-    "lastname": string;
-    "email": string;
-    "status": MemberStatus;
-    "role": MemberRole;
-    "expirationTime"?: number;
-    "memberContractOnFile": boolean;
+export interface Member extends NewMember {
+    "id"?: string;
     "cardId"?: string;
     "subscriptionId"?: string;
-    "subscription": boolean;
+    "subscription"?: boolean;
     "customerId"?: string;
     "earnedMembershipId"?: string;
-    "notes"?: string;
-    "phone"?: string;
-    "address": AdminmembersidAddress;
+    "expirationTime"?: number;
 }
 
 export enum MemberRole {
@@ -359,6 +358,14 @@ export interface MemberSummary {
     "expirationTime"?: number;
     "memberContractOnFile": boolean;
     "notes"?: string;
+}
+
+export interface MembersAddress {
+    "street"?: string;
+    "unit"?: string;
+    "city"?: string;
+    "state"?: string;
+    "postalCode"?: string;
 }
 
 export interface MemberspasswordMember {
@@ -396,23 +403,10 @@ export interface NewInvoiceOption {
     "isPromotion"?: boolean;
 }
 
-export interface NewMember {
-    "firstname": string;
-    "lastname": string;
-    "email": string;
+export interface NewMember extends BaseMember {
     "status"?: MemberStatus;
     "role"?: MemberRole;
     "memberContractOnFile"?: boolean;
-    "phone": string;
-    "address": NewMemberAddress;
-}
-
-export interface NewMemberAddress {
-    "street"?: string;
-    "unit"?: string;
-    "city"?: string;
-    "state"?: string;
-    "postalCode"?: string;
 }
 
 export interface NewRental {
@@ -505,7 +499,7 @@ export interface RegisterMemberDetails {
     "firstname": string;
     "lastname": string;
     "phone"?: string;
-    "address"?: AdminmembersidAddress;
+    "address"?: MembersAddress;
 }
 
 export interface RegistrationEmailDetails {
@@ -643,33 +637,8 @@ export interface UpdateInvoiceDetails {
     "settled"?: boolean;
 }
 
-export interface UpdateMemberDetails {
-    "firstname"?: string;
-    "lastname"?: string;
-    "email"?: string;
-    "address"?: AdminmembersidAddress;
-    "phone"?: string;
-    "status"?: UpdateMemberDetailsStatusEnum;
-    "role"?: UpdateMemberDetailsRoleEnum;
-    "renew"?: number;
-    "memberContractOnFile"?: boolean;
-    "subscription"?: boolean;
-}
-
-
-export enum UpdateMemberDetailsStatusEnum {
-    ActiveMember = 'activeMember',
-    Inactive = 'inactive',
-    NonMember = 'nonMember',
-    Revoked = 'revoked'
-}
-
-export enum UpdateMemberDetailsRoleEnum {
-    Admin = 'admin',
-    Member = 'member'
-}
-
-export interface UpdateMemberDetails1 {
+export interface UpdateMemberDetails extends BaseMember {
+    "signature"?: string;
 }
 
 export interface UpdateRentalDetails {
@@ -1141,7 +1110,7 @@ export function adminCreateMember(params: {  "body": NewMember; }): Promise<{ re
 * @param body 
 * @param id 
 */
-export function adminUpdateMember(params: {  "body": UpdateMemberDetails; "id": string; }): Promise<{ response: Response, data: Member }> {
+export function adminUpdateMember(params: {  "body": AdminUpdateMemberDetails; "id": string; }): Promise<{ response: Response, data: Member }> {
     const path = `/admin/members/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest<Member>(
@@ -1190,7 +1159,7 @@ export function listMembers(params: {  "pageNum"?: number; "orderBy"?: string; "
 * @param body 
 * @param id 
 */
-export function updateMember(params: {  "body": UpdateMemberDetails1; "id": string; }): Promise<{ response: Response, data: Member }> {
+export function updateMember(params: {  "body": UpdateMemberDetails; "id": string; }): Promise<{ response: Response, data: Member }> {
     const path = `/members/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest<Member>(
