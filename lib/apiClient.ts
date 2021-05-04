@@ -154,8 +154,19 @@ const getCookie = (name: string): string => {
 
 /* tslint:disable */
 
-export interface AdminUpdateMemberDetails extends NewMember {
+export interface AdminUpdateMemberDetails {
     "renew"?: number;
+    "firstname"?: string;
+    "lastname"?: string;
+    "email"?: string;
+    "status"?: MemberStatus;
+    "role"?: MemberRole;
+    "expirationTime"?: number;
+    "memberContractOnFile"?: boolean;
+    "notes"?: string;
+    "silenceEmails"?: boolean;
+    "phone"?: string;
+    "address"?: MembersAddress;
 }
 
 export interface BaseMember {
@@ -500,6 +511,7 @@ export interface Rental extends NewRental {
 export interface Report extends NewReport {
     "id": string;
     "date": string;
+    "reportRequirements": Array<ReportRequirement>;
 }
 
 export interface ReportRequirement extends NewReportRequirement {
@@ -602,8 +614,15 @@ export interface UpdateInvoiceDetails {
     "settled"?: boolean;
 }
 
-export interface UpdateMemberDetails extends NewMember {
-    "signature": string;
+export interface UpdateMemberDetails {
+    "firstname"?: string;
+    "lastname"?: string;
+    "email"?: string;
+    "memberContractOnFile"?: boolean;
+    "silenceEmails"?: boolean;
+    "phone"?: string;
+    "address"?: MembersAddress;
+    "signature"?: string;
 }
 
 export interface UpdateRentalDetails {
