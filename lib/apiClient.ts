@@ -277,6 +277,7 @@ export interface EarnedMembership extends NewEarnedMembership {
     "memberName": string;
     "memberStatus": MemberStatus;
     "memberExpiration": number;
+    "requirements": Array<Requirement>;
 }
 
 export interface Error {
