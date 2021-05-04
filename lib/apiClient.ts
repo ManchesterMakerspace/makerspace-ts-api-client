@@ -156,14 +156,18 @@ const getCookie = (name: string): string => {
 
 export interface AdminUpdateMemberDetails extends NewMember {
     "renew"?: number;
-    "subscription"?: boolean;
-    "expirationTime"?: number;
 }
 
 export interface BaseMember {
     "firstname": string;
     "lastname": string;
     "email": string;
+    "status": MemberStatus;
+    "role": MemberRole;
+    "expirationTime": number;
+    "memberContractOnFile": boolean;
+    "notes"?: string;
+    "silenceEmails"?: boolean;
 }
 
 export interface Card {
@@ -334,12 +338,7 @@ export enum MemberStatus {
     Revoked = 'revoked'
 }
 export interface MemberSummary extends BaseMember {
-    "status": MemberStatus;
-    "role": MemberRole;
-    "expirationTime"?: number;
-    "memberContractOnFile": boolean;
-    "notes"?: string;
-    "silenceEmails"?: boolean;
+    "id": string;
 }
 
 export interface MembersAddress {
@@ -387,15 +386,7 @@ export interface NewInvoiceOption {
 
 export interface NewMember extends MemberSummary {
     "phone"?: string;
-    "address"?: NewMemberAddress;
-}
-
-export interface NewMemberAddress {
-    "street"?: string;
-    "unit"?: string;
-    "city"?: string;
-    "state"?: string;
-    "postalCode"?: string;
+    "address"?: MembersAddress;
 }
 
 export interface NewRental {
@@ -611,8 +602,8 @@ export interface UpdateInvoiceDetails {
     "settled"?: boolean;
 }
 
-export interface UpdateMemberDetails extends BaseMember {
-    "signature"?: string;
+export interface UpdateMemberDetails extends NewMember {
+    "signature": string;
 }
 
 export interface UpdateRentalDetails {
