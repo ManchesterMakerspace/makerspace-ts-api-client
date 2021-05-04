@@ -154,20 +154,16 @@ const getCookie = (name: string): string => {
 
 /* tslint:disable */
 
-export interface AdminUpdateMemberDetails extends BaseMember {
+export interface AdminUpdateMemberDetails extends NewMember {
     "renew"?: number;
     "subscription"?: boolean;
     "expirationTime"?: number;
 }
 
 export interface BaseMember {
-    "firstname"?: string;
-    "lastname"?: string;
-    "email"?: string;
-    "phone"?: string;
-    "silenceEmails"?: string;
-    "notes"?: string;
-    "address"?: MembersAddress;
+    "firstname": string;
+    "lastname": string;
+    "email": string;
 }
 
 export interface Card {
@@ -261,13 +257,11 @@ export interface Dispute {
     "transaction": Transaction;
 }
 
-export interface EarnedMembership {
+export interface EarnedMembership extends NewEarnedMembership {
     "id": string;
-    "memberId": string;
     "memberName": string;
     "memberStatus": MemberStatus;
     "memberExpiration": number;
-    "requirements": Array<Requirement>;
 }
 
 export interface Error {
@@ -311,17 +305,8 @@ export interface Invoice {
     "resource": Member | Rental;
 }
 
-export interface InvoiceOption {
+export interface InvoiceOption extends NewInvoiceOption {
     "id": string;
-    "name": string;
-    "description": string;
-    "amount": string;
-    "planId"?: string;
-    "resourceClass": InvoiceableResource;
-    "quantity": number;
-    "discountId"?: string;
-    "disabled": boolean;
-    "isPromotion"?: boolean;
 }
 
 export enum InvoiceableResource {
@@ -329,13 +314,13 @@ export enum InvoiceableResource {
     Rental = 'rental'
 }
 export interface Member extends NewMember {
-    "id"?: string;
+    "id": string;
+    "expirationTime": number;
     "cardId"?: string;
     "subscriptionId"?: string;
     "subscription"?: boolean;
     "customerId"?: string;
     "earnedMembershipId"?: string;
-    "expirationTime"?: number;
 }
 
 export enum MemberRole {
@@ -348,16 +333,13 @@ export enum MemberStatus {
     NonMember = 'nonMember',
     Revoked = 'revoked'
 }
-export interface MemberSummary {
-    "id": string;
-    "firstname": string;
-    "lastname": string;
-    "email": string;
+export interface MemberSummary extends BaseMember {
     "status": MemberStatus;
     "role": MemberRole;
     "expirationTime"?: number;
     "memberContractOnFile": boolean;
     "notes"?: string;
+    "silenceEmails"?: boolean;
 }
 
 export interface MembersAddress {
@@ -403,10 +385,17 @@ export interface NewInvoiceOption {
     "isPromotion"?: boolean;
 }
 
-export interface NewMember extends BaseMember {
-    "status"?: MemberStatus;
-    "role"?: MemberRole;
-    "memberContractOnFile"?: boolean;
+export interface NewMember extends MemberSummary {
+    "phone"?: string;
+    "address"?: NewMemberAddress;
+}
+
+export interface NewMemberAddress {
+    "street"?: string;
+    "unit"?: string;
+    "city"?: string;
+    "state"?: string;
+    "postalCode"?: string;
 }
 
 export interface NewRental {
@@ -415,6 +404,7 @@ export interface NewRental {
     "description"?: string;
     "expiration"?: number;
     "contractOnFile"?: boolean;
+    "notes"?: string;
 }
 
 export interface NewReport {
@@ -441,7 +431,7 @@ export interface PasswordError {
 }
 
 export interface PasswordErrorErrors {
-    "email"?: Array<string>;
+    "email": Array<string>;
 }
 
 export interface PasswordResetDetails {
@@ -487,10 +477,10 @@ export enum PlanTypeEnum {
 }
 
 export interface PlanDiscounts {
-    "id"?: string;
-    "name"?: string;
-    "description"?: string;
-    "amount"?: string;
+    "id": string;
+    "name": string;
+    "description": string;
+    "amount": string;
 }
 
 export interface RegisterMemberDetails {
@@ -510,45 +500,29 @@ export interface RejectionCard {
     "uid": string;
 }
 
-export interface Rental {
+export interface Rental extends NewRental {
     "id": string;
-    "number": string;
-    "description": string;
     "memberName": string;
-    "memberId": string;
-    "expiration": number;
-    "subscriptionId"?: string;
-    "contractOnFile": boolean;
-    "notes"?: string;
+    "subscriptionId": string;
 }
 
-export interface Report {
+export interface Report extends NewReport {
     "id": string;
     "date": string;
-    "earnedMembershipId": string;
-    "reportRequirements": Array<ReportRequirement>;
 }
 
-export interface ReportRequirement {
+export interface ReportRequirement extends NewReportRequirement {
     "id": string;
-    "requirementId": string;
-    "reportedCount": number;
     "appliedCount": number;
     "currentCount": number;
-    "memberIds": Array<string>;
     "termStartDate": string;
     "termEndDate": string;
     "satisfied": boolean;
 }
 
-export interface Requirement {
+export interface Requirement extends NewRequirement {
     "id": string;
     "earnedMembershipId": string;
-    "name": string;
-    "rolloverLimit": number;
-    "termLength": number;
-    "targetCount": number;
-    "strict": boolean;
     "currentCount": number;
     "termStartDate": string;
     "termEndDate": string;
@@ -599,7 +573,7 @@ export interface Transaction {
     "recurring": boolean;
     "refundIds": Array<string>;
     "refundedTransactionId"?: string;
-    "subscriptionDetails": TransactionSubscriptionDetails;
+    "subscriptionDetails"?: TransactionSubscriptionDetails;
     "subscriptionId"?: string;
     "amount": string;
     "memberId": string;
