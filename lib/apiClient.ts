@@ -173,10 +173,10 @@ export interface BaseMember {
     "firstname": string;
     "lastname": string;
     "email": string;
-    "status": MemberStatus;
-    "role": MemberRole;
-    "expirationTime": number;
-    "memberContractOnFile": boolean;
+    "status"?: MemberStatus;
+    "role"?: MemberRole;
+    "expirationTime"?: number;
+    "memberContractOnFile"?: boolean;
     "notes"?: string;
     "silenceEmails"?: boolean;
 }
@@ -396,7 +396,7 @@ export interface NewInvoiceOption {
     "isPromotion"?: boolean;
 }
 
-export interface NewMember extends MemberSummary {
+export interface NewMember extends BaseMember {
     "phone"?: string;
     "address"?: MembersAddress;
 }
