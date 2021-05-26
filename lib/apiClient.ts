@@ -156,6 +156,7 @@ const getCookie = (name: string): string => {
 
 export interface AdminUpdateMemberDetails {
     "renew"?: number;
+    "subscription"?: boolean;
     "firstname"?: string;
     "lastname"?: string;
     "email"?: string;
@@ -177,8 +178,8 @@ export interface BaseMember {
     "role"?: MemberRole;
     "expirationTime"?: number;
     "memberContractOnFile"?: boolean;
-    "notes"?: string;
     "silenceEmails"?: boolean;
+    "notes"?: string;
 }
 
 export interface Card {
@@ -331,7 +332,6 @@ export enum InvoiceableResource {
 }
 export interface Member extends NewMember {
     "id": string;
-    "expirationTime": number;
     "cardId"?: string;
     "subscriptionId"?: string;
     "subscription"?: boolean;
@@ -393,12 +393,20 @@ export interface NewInvoiceOption {
     "planId"?: string;
     "discountId"?: string;
     "disabled"?: boolean;
-    "isPromotion"?: boolean;
+    "promotionEndDate"?: string;
 }
 
 export interface NewMember extends BaseMember {
     "phone"?: string;
-    "address"?: MembersAddress;
+    "address"?: NewMemberAddress;
+}
+
+export interface NewMemberAddress {
+    "street"?: string;
+    "unit"?: string;
+    "city"?: string;
+    "state"?: string;
+    "postalCode"?: string;
 }
 
 export interface NewRental {
@@ -443,6 +451,14 @@ export interface PasswordResetDetails {
 
 export interface PasswordResetDetails1 {
     "member"?: MemberspasswordMember1;
+}
+
+export interface PasswordResetError {
+    "errors": PasswordResetErrorErrors;
+}
+
+export interface PasswordResetErrorErrors {
+    "reset_password_token": Array<string>;
 }
 
 export interface PayPalAccount {
@@ -506,7 +522,7 @@ export interface RejectionCard {
 export interface Rental extends NewRental {
     "id": string;
     "memberName": string;
-    "subscriptionId": string;
+    "subscriptionId"?: string;
 }
 
 export interface Report extends NewReport {
@@ -768,15 +784,15 @@ export function message(params: {  "body": MessageDetails; }): Promise<{ respons
 }
 
 /** 
-* Gets a list of billing plan discounts
+* Gets a list of discounts
 * @param pageNum 
 * @param orderBy 
 * @param order 
 * @param subscriptionOnly 
 * @param types 
 */
-export function adminListBillingPlanDiscounts(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "subscriptionOnly"?: boolean; "types"?: Array<string>; }): Promise<{ response: Response, data: Array<Discount> }> {
-    const path = `/admin/billing/plans/discounts`;
+export function listBillingDiscounts(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "subscriptionOnly"?: boolean; "types"?: Array<string>; }): Promise<{ response: Response, data: Array<Discount> }> {
+    const path = `/billing/discounts`;
 
     return makeRequest<Array<Discount>>(
         "GET",
@@ -1261,8 +1277,8 @@ export function listMembersPermissions(params: {  "id": string; }): Promise<{ re
 * @param order 
 * @param types 
 */
-export function adminListBillingPlans(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "types"?: Array<string>; }): Promise<{ response: Response, data: Array<Plan> }> {
-    const path = `/admin/billing/plans`;
+export function listBillingPlans(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "types"?: Array<string>; }): Promise<{ response: Response, data: Array<Plan> }> {
+    const path = `/billing/plans`;
 
     return makeRequest<Array<Plan>>(
         "GET",
