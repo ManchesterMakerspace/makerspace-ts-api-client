@@ -177,6 +177,7 @@ export interface BaseMember {
     "status"?: MemberStatus;
     "role"?: MemberRole;
     "expirationTime"?: number;
+    "memberContractSignedDate"?: string;
     "memberContractOnFile"?: boolean;
     "silenceEmails"?: boolean;
     "notes"?: string;
@@ -394,6 +395,7 @@ export interface NewInvoiceOption {
     "discountId"?: string;
     "disabled"?: boolean;
     "promotionEndDate"?: string;
+    "isPromotion"?: boolean;
 }
 
 export interface NewMember extends BaseMember {
@@ -810,15 +812,17 @@ export function listBillingDiscounts(params: {  "pageNum"?: number; "orderBy"?: 
 /** 
 * Get a document
 * @param id 
+* @param saved 
 * @param resourceId 
 */
-export function getDocument(params: {  "id": string; "resourceId"?: string; }): Promise<{ response: Response, data: undefined }> {
+export function getDocument(params: {  "id": string; "saved"?: boolean; "resourceId"?: string; }): Promise<{ response: Response, data: undefined }> {
     const path = `/documents/{id}`.replace(`{${"id"}}`, `${ params["id"] }`);
 
     return makeRequest(
         "GET",
         path,
         {
+            ...params["saved"] !== undefined && { "saved": params["saved"] },
             ...params["resourceId"] !== undefined && { "resourceId": params["resourceId"] }
         },
     );
