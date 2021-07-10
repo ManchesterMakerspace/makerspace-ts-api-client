@@ -616,7 +616,7 @@ export enum TransactionStatusEnum {
     ProcessorDeclined = 'processor_declined',
     Settled = 'settled',
     Settling = 'settling',
-    SubmmittedForSettlement = 'submmitted_for_settlement',
+    SubmittedForSettlement = 'submitted_for_settlement',
     Voided = 'voided'
 }
 
@@ -955,10 +955,11 @@ export function getInvoiceOption(params: {  "id": string; }): Promise<{ response
 * @param pageNum 
 * @param orderBy 
 * @param order 
+* @param only_enabled 
 * @param subscriptionOnly 
 * @param types 
 */
-export function listInvoiceOptions(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "subscriptionOnly"?: boolean; "types"?: Array<string>; }): Promise<{ response: Response, data: Array<InvoiceOption> }> {
+export function listInvoiceOptions(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "only_enabled"?: boolean; "subscriptionOnly"?: boolean; "types"?: Array<string>; }): Promise<{ response: Response, data: Array<InvoiceOption> }> {
     const path = `/invoice_options`;
 
     return makeRequest<Array<InvoiceOption>>(
@@ -968,6 +969,7 @@ export function listInvoiceOptions(params: {  "pageNum"?: number; "orderBy"?: st
             ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
             ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
             ...params["order"] !== undefined && { "order": params["order"] },
+            ...params["only_enabled"] !== undefined && { "only_enabled": params["only_enabled"] },
             ...params["subscriptionOnly"] !== undefined && { "subscriptionOnly": params["subscriptionOnly"] },
             ...params["types"] !== undefined && { "types": params["types"] }
         },
