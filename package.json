@@ -1,6 +1,6 @@
 {
   "name": "makerspace-ts-api-client",
-  "version": "2.8.0",
+  "version": "2.10.0",
   "main": "dist/apiClient.js",
   "types": "dist/apiClient.d.ts",
   "author": "Will Lynch <will.lynch91@gmail.com>",
@@ -11,8 +11,9 @@
   ],
   "scripts": {
     "generate": "$(npm bin)/makerspace-ts-api-client-generator generate -o ./lib",
-    "build": "$(npm bin)/tsc",
-    "prepublish": "yarn build"
+    "generate:eventbrite": "node scripts/generate-eventbrite.cjs",
+    "build": "tsc -p tsconfig.json",
+    "prepublish": "npm run build"
   },
   "devDependencies": {
     "@types/node": "^12.6.2",
