@@ -44,4 +44,3 @@ export function listMemberEventbriteOrders(params: { "member_id": string; "pageN
 export function listMemberEventbriteAttendees(params: { "member_id": string; "pageNum"?: number; }): Promise<ApiDataResponse<Array<EventbriteRecord>>> {
   return makeRequest<Array<EventbriteRecord>>("GET", "/admin/members/{member_id}/eventbrite/attendees".replace("{member_id}", encodeURIComponent(params["member_id"])), { "pageNum": params["pageNum"] });
 }
-

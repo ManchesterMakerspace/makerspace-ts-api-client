@@ -34,7 +34,7 @@ for (const { path, method, op } of operations) {
   const payload = body ? 'params.body' : query.length ? `{ ${query.map(p => `${JSON.stringify(p.name)}: params[${JSON.stringify(p.name)}]`).join(', ')} }` : 'undefined';
   output += `export function ${op.operationId}(${signature}): Promise<ApiDataResponse<${result}>> {\n  return makeRequest<${result}>(${JSON.stringify(method.toUpperCase())}, ${pathExpression}, ${payload});\n}\n\n`;
 }
-fs.writeFileSync('lib/eventbrite.ts', output);
+fs.writeFileSync('lib/eventbrite.ts', output.trimEnd() + '\n');
 let base = fs.readFileSync('lib/apiClient.ts', 'utf8');
 if (!base.includes("import { SignupAttribution }")) {
   base = "import { SignupAttribution } from './eventbrite';\n" + base;
