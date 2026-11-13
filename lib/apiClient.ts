@@ -1,3 +1,4 @@
+import { SignupAttribution } from './eventbrite';
 export interface ApiError {
   status: number;
   message: string;
@@ -332,6 +333,8 @@ export enum InvoiceableResource {
     Rental = 'rental'
 }
 export interface Member extends NewMember {
+    signupSourcePromptPending?: boolean;
+    signupEventbriteEventSnapshot?: { name: string; startsAt: string; timezone: string };
     "id": string;
     "cardId"?: string;
     "subscriptionId"?: string;
@@ -398,7 +401,7 @@ export interface NewInvoiceOption {
     "isPromotion"?: boolean;
 }
 
-export interface NewMember extends BaseMember {
+export interface NewMember extends BaseMember, SignupAttribution {
     "phone"?: string;
     "address"?: NewMemberAddress;
 }
@@ -955,11 +958,11 @@ export function getInvoiceOption(params: {  "id": string; }): Promise<{ response
 * @param pageNum 
 * @param orderBy 
 * @param order 
-* @param only_enabled 
+* @param onlyEnabled
 * @param subscriptionOnly 
 * @param types 
 */
-export function listInvoiceOptions(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "only_enabled"?: boolean; "subscriptionOnly"?: boolean; "types"?: Array<string>; }): Promise<{ response: Response, data: Array<InvoiceOption> }> {
+export function listInvoiceOptions(params: {  "pageNum"?: number; "orderBy"?: string; "order"?: string; "onlyEnabled"?: boolean; "subscriptionOnly"?: boolean; "types"?: Array<string>; }): Promise<{ response: Response, data: Array<InvoiceOption> }> {
     const path = `/invoice_options`;
 
     return makeRequest<Array<InvoiceOption>>(
@@ -969,7 +972,7 @@ export function listInvoiceOptions(params: {  "pageNum"?: number; "orderBy"?: st
             ...params["pageNum"] !== undefined && { "pageNum": params["pageNum"] },
             ...params["orderBy"] !== undefined && { "orderBy": params["orderBy"] },
             ...params["order"] !== undefined && { "order": params["order"] },
-            ...params["only_enabled"] !== undefined && { "only_enabled": params["only_enabled"] },
+            ...params["onlyEnabled"] !== undefined && { "onlyEnabled": params["onlyEnabled"] },
             ...params["subscriptionOnly"] !== undefined && { "subscriptionOnly": params["subscriptionOnly"] },
             ...params["types"] !== undefined && { "types": params["types"] }
         },
@@ -1593,9 +1596,10 @@ export function adminGetTransaction(params: {  "id": string; }): Promise<{ respo
 * @param refund 
 * @param type 
 * @param transactionStatus 
+* @param discountId
 * @param customerId 
 */
-export function adminListTransaction(params: {  "startDate"?: string; "endDate"?: string; "refund"?: boolean; "type"?: string; "transactionStatus"?: Array<string>; "customerId"?: string; }): Promise<{ response: Response, data: Array<Transaction> }> {
+export function adminListTransaction(params: {  "startDate"?: string; "endDate"?: string; "refund"?: boolean; "type"?: string; "transactionStatus"?: Array<string>; "discountId"?: Array<string>; "customerId"?: string; }): Promise<{ response: Response, data: Array<Transaction> }> {
     const path = `/admin/billing/transactions`;
 
     return makeRequest<Array<Transaction>>(
@@ -1607,6 +1611,7 @@ export function adminListTransaction(params: {  "startDate"?: string; "endDate"?
             ...params["refund"] !== undefined && { "refund": params["refund"] },
             ...params["type"] !== undefined && { "type": params["type"] },
             ...params["transactionStatus"] !== undefined && { "transactionStatus": params["transactionStatus"] },
+            ...params["discountId"] !== undefined && { "discountId": params["discountId"] },
             ...params["customerId"] !== undefined && { "customerId": params["customerId"] }
         },
     );
@@ -1661,3 +1666,5 @@ export function listTransactions(params: {  "startDate"?: string; "endDate"?: st
         },
     );
 }
+
+export * from './eventbrite';
